@@ -4,6 +4,8 @@ import "./App.css";
 import Login from "./pages/Login";
 import MainPage from "./pages/MainPage";
 import SignUp from "./pages/SignUp";
+import SettingPageFirst from "./pages/SettingPageFirst";
+import SettingPage from "./pages/SettingPage";
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
           <Route path="" element={<MainPage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/settingfirst" element={<SettingPageFirst />} />
+          <Route path="/setting" element={<SettingPage />} />
         </Routes>
       </div>
     </BrowserRouter>

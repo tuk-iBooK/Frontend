@@ -14,20 +14,23 @@ const MainPage: React.FC = () => {
             회원가입
           </Link>
         </div>
-        <button
-          type="button"
-          className="px-12 py-3 mb-10 ml-4 rounded-full text-white text-2xl bg-[#9B8F8F] hover:bg-[#E9E7E4] hover:text-[#898181] text-center shadow-lg shadow-black-800/80 dark:shadow-lg dark:shadow-black-800/80"
-          // onClick={() => {
-          //   if (authState.isLoggedIn) {
-          //     navigate("/settingfirst");
-          //   } else {
-          //     alert("로그인이 필요합니다.");
-          //     navigate("/login");
-          //   }
-          // }}
-        >
-          시작하기
-        </button>
+        <Link to="/settingfirst">
+          <button
+            type="button"
+            className="px-12 py-3 mb-10 ml-4 rounded-full text-white text-2xl bg-[#9B8F8F] hover:bg-[#E9E7E4] hover:text-[#898181] text-center shadow-lg shadow-black-800/80 dark:shadow-lg dark:shadow-black-800/80"
+            // onClick={() => {
+
+            //   if (authState.isLoggedIn) {
+            //     navigate("/settingfirst");
+            //   } else {
+            //     alert("로그인이 필요합니다.");
+            //     navigate("/login");
+            //   }
+            // }}
+          >
+            시작하기
+          </button>
+        </Link>
       </div>
     </div>
   );
