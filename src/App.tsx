@@ -1,16 +1,25 @@
-// src/App.tsx
-
 import React from "react";
-import "./index.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
+import Login from "./pages/Login";
+import MainPage from "./pages/MainPage";
+import SignUp from "./pages/SignUp";
+import SettingPageFirst from "./pages/SettingPageFirst";
+import SettingPage from "./pages/SettingPage";
 
 function App() {
   return (
-    <div className="bg-gray-800 text-white p-4">
-      <h1 className="text-2xl font-bold">
-        My TypeScript React Tailwind Project
-      </h1>
-      <p className="mt-2">Welcome to your app!</p>
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <Routes>
+          <Route path="" element={<MainPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/settingfirst" element={<SettingPageFirst />} />
+          <Route path="/setting" element={<SettingPage />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
