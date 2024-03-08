@@ -115,7 +115,6 @@ const SettingPageFirst: React.FC = () => {
             </div>
           </div>
         </div>
-        {/* 다음버튼 */}
         <div className="flex flex-col items-end">
           <button
             className="px-16 py-3 pr-16 font-bold text-white bg-[#9B8F8F] hover:bg-[#E9E7E4] hover:text-[#898181] rounded-2xl text-center shadow-lg shadow-black-800/80 dark:shadow-lg dark:shadow-black-800/80"

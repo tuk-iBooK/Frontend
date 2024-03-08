@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-// import addLogo from "../../public/images/add.png";
 
 interface GenreBoxProps {
   selectedGenres: string[];
@@ -14,21 +13,14 @@ const GenreBox: React.FC<GenreBoxProps> = ({
 }) => {
   const [newGenre, setNewGenre] = useState("");
   const [enterPressed, setEnterPressed] = useState(false);
-  const [genres, setGenres] = useState<string[]>([
-    "공포",
-    "SF",
-    "로맨스",
-    "판타지",
-    "코미디",
-    "액션",
-    "스포츠",
-    "성장",
-    "청춘",
-    "드라마",
-    "스릴러",
-    "타임루프",
-    "재난",
-  ]);
+
+  const genres: { [key: string]: string } = {
+    환상: "fantasy",
+    모험: "adventure",
+    동화: "fairy_tale",
+    신화: "mythology",
+    과학소설: "science_fiction",
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!enterPressed) {
@@ -38,9 +30,11 @@ const GenreBox: React.FC<GenreBoxProps> = ({
 
   const handleAddGenre = () => {
     if (newGenre.trim() !== "") {
-      onGenreSubmit(newGenre.trim());
-      setGenres([...genres, newGenre.trim()]);
-      setNewGenre("");
+      const englishGenre = genres[newGenre.trim()];
+      if (englishGenre) {
+        onGenreSubmit(englishGenre);
+        setNewGenre("");
+      }
     }
   };
 
@@ -61,12 +55,12 @@ const GenreBox: React.FC<GenreBoxProps> = ({
   };
 
   const renderGenreButtons = () => {
-    return genres.map((genre, index) => (
+    return Object.keys(genres).map((koreanGenre, index) => (
       <div
         className="genreButton"
         key={index}
         style={{
-          backgroundColor: selectedGenres.includes(genre)
+          backgroundColor: selectedGenres.includes(genres[koreanGenre])
             ? "#9B8F8F"
             : "#E3DDD7",
           width: "78.6px",
@@ -78,14 +72,16 @@ const GenreBox: React.FC<GenreBoxProps> = ({
           alignItems: "center",
           cursor: "pointer",
         }}
-        onClick={() => handleGenreClick(genre)}
+        onClick={() => handleGenreClick(genres[koreanGenre])}
       >
         <p
           style={{
-            color: selectedGenres.includes(genre) ? "#FFFFFF" : "#000000",
+            color: selectedGenres.includes(genres[koreanGenre])
+              ? "#FFFFFF"
+              : "#000000",
           }}
         >
-          {genre}
+          {koreanGenre}
         </p>
       </div>
     ));
@@ -112,14 +108,14 @@ const GenreBox: React.FC<GenreBoxProps> = ({
               value={newGenre}
               onChange={handleInputChange}
               onKeyDown={handleInputKeyDown}
-              placeholder="원하는 장르를 추가하세요"
+              placeholder="환상, 모험, 동화, 신화, 과학 소설"
               className="w-11/12 h-[44px] text-15 ml-[10px] flex-1"
             />
           </div>
           <button className="flex items-center pr-1" onClick={handleAddGenre}>
             <img
               src={process.env.PUBLIC_URL + "/images/add.png"}
-              className="w-8 h-8 curdor-pointer"
+              className="w-8 h-8 cursor-pointer"
             />
           </button>
         </div>
