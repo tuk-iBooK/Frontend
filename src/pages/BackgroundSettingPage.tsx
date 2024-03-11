@@ -1,38 +1,41 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const PeriodSettingPage: React.FC = () => {
-  const [selectPeriods, setSelectedPeriods] = useState<string[]>([]);
-  const [additionalPeriod, setAdditionalPeriod] = useState<string>("");
+const BackgroundSettingPage: React.FC = () => {
+  const [selectedBackgrounds, setSelectedBackgrounds] = useState<string[]>([]);
+  const [additionalBackground, setAdditionalBackground] = useState<string>("");
   const navigate = useNavigate();
 
-  const handlePeriodClick = (period: string) => {
-    setSelectedPeriods((prevPeriods) =>
-      prevPeriods.includes(period)
-        ? prevPeriods.filter((g) => g !== period)
-        : [...prevPeriods, period]
+  const handleBackgroundClick = (background: string) => {
+    setSelectedBackgrounds((prevBackgrounds) =>
+      prevBackgrounds.includes(background)
+        ? prevBackgrounds.filter((g) => g !== background)
+        : [...prevBackgrounds, background]
     );
   };
 
-  const handleAddperiod = () => {
-    if (additionalPeriod.trim() !== "") {
-      const trimmedperiod = additionalPeriod.trim();
-      if (!selectPeriods.includes(trimmedperiod)) {
-        setSelectedPeriods((prevPeriods) => [...prevPeriods, trimmedperiod]);
+  const handleAddBackground = () => {
+    if (additionalBackground.trim() !== "") {
+      const trimmedbackground = additionalBackground.trim();
+      if (!selectedBackgrounds.includes(trimmedbackground)) {
+        setSelectedBackgrounds((prevBackgrounds) => [
+          ...prevBackgrounds,
+          trimmedbackground,
+        ]);
       }
-      // setAdditionalperiod(""); // 입력값 초기화
+      // setAdditionalBackground(""); // 입력값 초기화
     }
   };
 
-  const handleRemoveperiod = (period: string) => {
-    setSelectedPeriods((prevPeriods) =>
-      prevPeriods.filter((g) => g !== period)
+  const handleRemovebackground = (background: string) => {
+    setSelectedBackgrounds((prevBackgrounds) =>
+      prevBackgrounds.filter((g) => g !== background)
     );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Selected periods:", selectPeriods);
+    console.log("Selected backgrounds:", selectedBackgrounds);
   };
 
   const handleGoBack = () => {
@@ -40,7 +43,7 @@ const PeriodSettingPage: React.FC = () => {
   };
 
   const handleNextPage = () => {
-    navigate("/background");
+    navigate("/character");
   };
 
   return (
@@ -48,18 +51,18 @@ const PeriodSettingPage: React.FC = () => {
       <div className="w-3/4 mt-24 flex-1 justify-between items-center">
         <div className="bg-[#FFF0A3] p-4 mb-8 rounded-2xl shadow-lg">
           <div className="text-xl font-bold text-black font-['Inria'] p-4">
-            2. 원하는 이야기의 시간적 배경을 선택 혹은 입력하세요
+            3. 원하는 이야기의 공간적 배경을 선택 혹은 입력하세요
           </div>
           <div className="">
             <input
               type="text"
-              value={additionalPeriod}
-              onChange={(e) => setAdditionalPeriod(e.target.value)}
-              placeholder="원하는 시간적 배경을 입력하여 직접 추가하세요"
+              value={additionalBackground}
+              onChange={(e) => setAdditionalBackground(e.target.value)}
+              placeholder="원하는 공간적 배경을 입력하여 직접 추가하세요"
               className="w-3/5 py-2 p-4 border border-gray-300 rounded-2xl"
               onKeyDown={(e) => {
-                if (e.key === "Enter" && additionalPeriod.trim() !== "") {
-                  handleAddperiod();
+                if (e.key === "Enter" && additionalBackground.trim() !== "") {
+                  handleAddBackground();
                 }
               }}
             />
@@ -87,17 +90,17 @@ const PeriodSettingPage: React.FC = () => {
               </button>
             </div>
             <div className="flex flex-col w-4/5 space-y-4 p-4 bg-white border border-gray-300 justify-center items-center rounded-2xl">
-              {["현대", "근대", "미래", "중세", "고대"].map((period, index) => (
+              {["숲", "뭐", "뭐지", "머", "배경"].map((background, index) => (
                 <button
                   key={index}
                   className={`py-2 px-4 rounded-full w-40 h-10  shadow-lg ${
-                    selectPeriods.includes(period)
+                    selectedBackgrounds.includes(background)
                       ? "bg-[#FFF0A3] text-black shadow-none"
                       : "bg-[#EBEBEB] text-black"
                   } hover:bg-[#FFF0A3] hover:shadow-none`}
-                  onClick={() => handlePeriodClick(period)}
+                  onClick={() => handleBackgroundClick(background)}
                 >
-                  {period}
+                  {background}
                 </button>
               ))}
             </div>
@@ -129,14 +132,14 @@ const PeriodSettingPage: React.FC = () => {
       <div className="w-3/4 flex p-4 bg-[#FFF0A3] rounded-2xl justify-center shadow-lg">
         <div className=" w-3/4 bg-white border border-gray-300 text-m text-black font-['Inria'] p-6 rounded-2xl">
           선택한 배경 :{" "}
-          {selectPeriods.map((period, index) => (
+          {selectedBackgrounds.map((background, index) => (
             <button
               key={index}
               className="px-6 py-1 bg-[#FFF0A3] text-black rounded-2xl m-2"
-              onClick={() => handleRemoveperiod(period)}
+              onClick={() => handleRemovebackground(background)}
             >
               <div className="flex">
-                <span className="ml-2">{period}</span>
+                <span className="ml-2">{background}</span>
                 <div className="p-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -180,4 +183,4 @@ const PeriodSettingPage: React.FC = () => {
   );
 };
 
-export default PeriodSettingPage;
+export default BackgroundSettingPage;

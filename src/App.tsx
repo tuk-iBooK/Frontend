@@ -8,6 +8,7 @@ import SettingPageFirst from "./pages/SettingPageFirst";
 import SettingPage from "./pages/SettingPage";
 import GenreSettingPage from "./pages/GenreSettingPage";
 import PeriodSettingPage from "./pages/PeriodSettingPage";
+import BackgroundSettingPage from "./pages/BackgroundSettingPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/setting" element={<SettingPage />} />
           <Route path="/genre" element={<GenreSettingPage />} />
           <Route path="/period" element={<PeriodSettingPage />} />
+          <Route path="/background" element={<BackgroundSettingPage />} />
         </Routes>
       </div>
     </BrowserRouter>
