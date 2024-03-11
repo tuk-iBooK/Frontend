@@ -7,6 +7,7 @@ import SignUp from "./pages/SignUp";
 import SettingPageFirst from "./pages/SettingPageFirst";
 import SettingPage from "./pages/SettingPage";
 import GenreSettingPage from "./pages/GenreSettingPage";
+import PeriodSettingPage from "./pages/PeriodSettingPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/settingfirst" element={<SettingPageFirst />} />
           <Route path="/setting" element={<SettingPage />} />
           <Route path="/genre" element={<GenreSettingPage />} />
+          <Route path="/period" element={<PeriodSettingPage />} />
         </Routes>
       </div>
     </BrowserRouter>

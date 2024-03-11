@@ -1,40 +1,46 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const GenreSettingPage: React.FC = () => {
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [additionalGenre, setAdditionalGenre] = useState<string>("");
+const PeriodSettingPage: React.FC = () => {
+  const [selectPeriods, setSelectedPeriods] = useState<string[]>([]);
+  const [additionalPeriod, setAdditionalPeriod] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleGenreClick = (genre: string) => {
-    setSelectedGenres((prevGenres) =>
-      prevGenres.includes(genre)
-        ? prevGenres.filter((g) => g !== genre)
-        : [...prevGenres, genre]
+  const handlePeriodClick = (period: string) => {
+    setSelectedPeriods((prevPeriods) =>
+      prevPeriods.includes(period)
+        ? prevPeriods.filter((g) => g !== period)
+        : [...prevPeriods, period]
     );
   };
 
-  const handleAddGenre = () => {
-    if (additionalGenre.trim() !== "") {
-      const trimmedGenre = additionalGenre.trim();
-      if (!selectedGenres.includes(trimmedGenre)) {
-        setSelectedGenres((prevGenres) => [...prevGenres, trimmedGenre]);
+  const handleAddperiod = () => {
+    if (additionalPeriod.trim() !== "") {
+      const trimmedperiod = additionalPeriod.trim();
+      if (!selectPeriods.includes(trimmedperiod)) {
+        setSelectedPeriods((prevPeriods) => [...prevPeriods, trimmedperiod]);
       }
-      // setAdditionalGenre(""); // 입력값 초기화
+      // setAdditionalperiod(""); // 입력값 초기화
     }
   };
 
-  const handleRemoveGenre = (genre: string) => {
-    setSelectedGenres((prevGenres) => prevGenres.filter((g) => g !== genre));
+  const handleRemoveperiod = (period: string) => {
+    setSelectedPeriods((prevPeriods) =>
+      prevPeriods.filter((g) => g !== period)
+    );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Selected genres:", selectedGenres);
+    console.log("Selected periods:", selectPeriods);
+  };
+
+  const handleGoBack = () => {
+    navigate("/genre");
   };
 
   const handleNextPage = () => {
-    navigate("/period");
+    navigate("/");
   };
 
   return (
@@ -42,27 +48,27 @@ const GenreSettingPage: React.FC = () => {
       <div className="w-3/4 mt-24 flex-1 justify-between items-center">
         <div className="bg-[#FFF0A3] p-4 mb-8 rounded-2xl shadow-lg">
           <div className="text-xl font-bold text-black font-['Inria'] p-4">
-            1. 원하는 이야기의 장르를 선택 혹은 입력하세요
+            2. 원하는 이야기의 시간적 배경을 선택 혹은 입력하세요
           </div>
           <div className="">
             <input
               type="text"
-              value={additionalGenre}
-              onChange={(e) => setAdditionalGenre(e.target.value)}
-              placeholder="원하는 장르를 입력하여 직접 추가하세요"
+              value={additionalPeriod}
+              onChange={(e) => setAdditionalPeriod(e.target.value)}
+              placeholder="원하는 시간적 배경을 입력하여 직접 추가하세요"
               className="w-3/5 py-2 p-4 border border-gray-300 rounded-2xl"
               onKeyDown={(e) => {
-                if (e.key === "Enter" && additionalGenre.trim() !== "") {
-                  handleAddGenre();
+                if (e.key === "Enter" && additionalPeriod.trim() !== "") {
+                  handleAddperiod();
                 }
               }}
             />
           </div>
           <div className="flex justify-center items-center m-4">
             <div className="bg-[#FFF0A3] p-4 rounded-2xl w-1/5 flex justify-center items-center">
-              {/* <button
-                className="w-12 h-12 bg-blue-500 text-white rounded-full flex justify-center items-center"
-                onClick={handleNextPage}
+              <button
+                className="w-12 h-12  bg-white text-gray-500 rounded-full flex justify-center items-center shadow-lg hover:shadow-none hover:bg-[#EBEBEB] hover:text-white"
+                onClick={handleGoBack}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -75,27 +81,25 @@ const GenreSettingPage: React.FC = () => {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M9 5l7 7-7 7"
+                    d="M15 19l-7-7 7-7"
                   />
                 </svg>
-              </button> */}
+              </button>
             </div>
             <div className="flex flex-col w-4/5 space-y-4 p-4 bg-white border border-gray-300 justify-center items-center rounded-2xl">
-              {["환상", "모험", "동화", "신화", "공상과학"].map(
-                (genre, index) => (
-                  <button
-                    key={index}
-                    className={`py-2 px-4 rounded-full w-40 h-10  shadow-lg ${
-                      selectedGenres.includes(genre)
-                        ? "bg-[#FFF0A3] text-black shadow-none"
-                        : "bg-[#EBEBEB] text-black"
-                    } hover:bg-[#FFF0A3] hover:shadow-none`}
-                    onClick={() => handleGenreClick(genre)}
-                  >
-                    {genre}
-                  </button>
-                )
-              )}
+              {["현대", "근대", "미래", "중세", "고대"].map((period, index) => (
+                <button
+                  key={index}
+                  className={`py-2 px-4 rounded-full w-40 h-10  shadow-lg ${
+                    selectPeriods.includes(period)
+                      ? "bg-[#FFF0A3] text-black shadow-none"
+                      : "bg-[#EBEBEB] text-black"
+                  } hover:bg-[#FFF0A3] hover:shadow-none`}
+                  onClick={() => handlePeriodClick(period)}
+                >
+                  {period}
+                </button>
+              ))}
             </div>
             <div className="p-4 rounded-2xl w-1/5 flex justify-center items-center">
               <button
@@ -124,15 +128,15 @@ const GenreSettingPage: React.FC = () => {
 
       <div className="w-3/4 flex p-4 bg-[#FFF0A3] rounded-2xl justify-center shadow-lg">
         <div className=" w-3/4 bg-white border border-gray-300 text-m text-black font-['Inria'] p-6 rounded-2xl">
-          선택한 장르 :{" "}
-          {selectedGenres.map((genre, index) => (
+          선택한 배경 :{" "}
+          {selectPeriods.map((period, index) => (
             <button
               key={index}
               className="px-6 py-1 bg-[#FFF0A3] text-black rounded-2xl m-2"
-              onClick={() => handleRemoveGenre(genre)}
+              onClick={() => handleRemoveperiod(period)}
             >
               <div className="flex">
-                <span className="ml-2">{genre}</span>
+                <span className="ml-2">{period}</span>
                 <div className="p-1">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -176,4 +180,4 @@ const GenreSettingPage: React.FC = () => {
   );
 };
 
-export default GenreSettingPage;
+export default PeriodSettingPage;
