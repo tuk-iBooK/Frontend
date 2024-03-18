@@ -34,7 +34,7 @@ function SignUp() {
       );
 
       if (response.status === 200) {
-        // const token = response.data.token;
+        const token = response.data.token;
         console.log("회원가입 성공!");
         navigate("/login");
       } else {
