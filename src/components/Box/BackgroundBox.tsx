@@ -15,18 +15,12 @@ const BackgroundBox: React.FC<BackgroundBoxProps> = ({
   const [newBackground, setNewBackground] = useState("");
   const [enterPressed, setEnterPressed] = useState(false);
   const [backgrounds, setBackgrounds] = useState<string[]>([
-    "한국",
-    "미국",
-    "영국",
-    "독일",
-    "로마",
-    "일본",
-    "회사",
-    "고등학교",
-    "대학교",
+    "숲",
+    "바다",
+    "시골",
+    "산 속",
+    "학교",
     "길거리",
-    "집",
-    "숲 속",
   ]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
