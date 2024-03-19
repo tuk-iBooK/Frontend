@@ -12,7 +12,7 @@ const MainPage: React.FC = () => {
       }
       const config = {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       };
 
