@@ -32,7 +32,7 @@ function Login() {
       .post("http://localhost:8000/api/auth/login/", formData)
       .then((response) => {
         if (response.status === 200) {
-          const token = response.data;
+          const token = response.data.token.access;
           localStorage.setItem("id", token);
           dispatch(loginSuccess());
           console.log("로그인 성공!");

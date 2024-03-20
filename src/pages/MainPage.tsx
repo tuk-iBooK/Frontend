@@ -1,8 +1,25 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const MainPage: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  const [story, setStory] = useState<number | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("id");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+  useEffect(() => {
+    const storedStory = localStorage.getItem("story");
+    if (storedStory) {
+      setStory(parseInt(storedStory));
+    }
+  }, []);
+
   const handleStart = async () => {
     try {
       const token = localStorage.getItem("id");
@@ -12,7 +29,7 @@ const MainPage: React.FC = () => {
       }
       const config = {
         headers: {
-          Authorization: `Token ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       };
 
@@ -22,11 +39,19 @@ const MainPage: React.FC = () => {
         config
       );
 
-      const { story_id } = response.data;
-      console.log("생성된 story_id:", story_id);
+      const { story } = response.data;
+      console.log("생성된 story:", story);
+      setStory(story);
+      localStorage.setItem("story", story.toString()); // story 값을 로컬 스토리지에 저장
+      navigate("/genre");
     } catch (error) {
       console.error("API 호출 중 오류가 발생했습니다:", error);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("id");
+    setIsLoggedIn(false);
   };
 
   return (
@@ -40,18 +65,29 @@ const MainPage: React.FC = () => {
           시작하기
         </button>
         <div>
-          <Link
-            to="/Login"
-            className="mr-4 text-gray-500 hover:underline hover:text-black"
-          >
-            로그인
-          </Link>
-          <Link
-            to="/SignUp"
-            className="text-gray-500 hover:underline hover:text-black"
-          >
-            회원가입
-          </Link>
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="mr-4 text-gray-500 hover:underline hover:text-black"
+            >
+              로그아웃
+            </button>
+          ) : (
+            <>
+              <Link
+                to="/Login"
+                className="mr-4 text-gray-500 hover:underline hover:text-black"
+              >
+                로그인
+              </Link>
+              <Link
+                to="/SignUp"
+                className="text-gray-500 hover:underline hover:text-black"
+              >
+                회원가입
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </div>
