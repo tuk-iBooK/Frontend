@@ -1,7 +1,12 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const CharacterSettingPage: React.FC = () => {
+  const location = useLocation();
+  const { state } = location;
+  const { story } = state || { story: null };
+
   const [characters, setCharacters] = useState<Character[]>([]);
   const [name, setName] = useState<string>("");
   const [age, setAge] = useState<number>(1);
@@ -10,9 +15,10 @@ const CharacterSettingPage: React.FC = () => {
   const navigate = useNavigate();
 
   interface Character {
-    name: string;
+    story: number;
     age: number;
     gender: string;
+    name: string;
     personality: string;
   }
 
@@ -22,11 +28,7 @@ const CharacterSettingPage: React.FC = () => {
       name.trim() !== "" &&
       personality.trim() !== ""
     ) {
-      setCharacters([...characters, { name, age, gender, personality }]);
-      setName("");
-      setAge(1);
-      setGender("남");
-      setPersonality("");
+      setCharacters([...characters, { story, name, age, gender, personality }]);
     }
   };
 
@@ -36,17 +38,61 @@ const CharacterSettingPage: React.FC = () => {
     setCharacters(updatedCharacters);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Selected Characters:", characters);
-  };
 
+    console.log("Selected Characters:", characters);
+    console.log("age:", age);
+    console.log("name:", name);
+    console.log("personality:", personality);
+    console.log("gender:", gender);
+
+    try {
+      const token = localStorage.getItem("id");
+      if (!token) {
+        console.error("토큰이 없습니다.");
+        return;
+      }
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      };
+      console.log(state);
+      const response = await axios.post(
+        "http://localhost:8000/api/story/register/character/",
+        {
+          // story: state?.story,
+          // age: 3,
+          // name: "김하은",
+          // personality: "귀여움",
+          // gender: "남",
+          story: state?.story,
+          age,
+          name,
+          personality,
+          gender,
+        },
+        config
+      );
+      console.log("사용자 토큰:", token);
+      if (response.status === 201) {
+        console.log("API 요청이 성공했습니다.");
+        navigate("/summary");
+      } else {
+        console.error("API 요청이 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("API 요청 중 오류가 발생했습니다:", error);
+    }
+  };
   const handleGoBack = () => {
     navigate("/background");
   };
 
   const handleNextPage = () => {
-    navigate("/");
+    navigate("/summary");
   };
 
   return (

@@ -32,10 +32,10 @@ const MainPage: React.FC = () => {
         config
       );
 
-      const { story_id } = response.data;
-      console.log("생성된 story_id:", story_id);
+      const { story } = response.data;
+      console.log("생성된 story:", story);
 
-      navigate(`/genre?story_id=${story_id}`);
+      navigate(`/character`, { state: { token, story } });
     } catch (error) {
       console.error("API 호출 중 오류가 발생했습니다:", error);
     }
