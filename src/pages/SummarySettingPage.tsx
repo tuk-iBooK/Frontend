@@ -50,7 +50,7 @@ const SummarySettingPage: React.FC = () => {
         },
         config
       );
-      if (response.status === 200) {
+      if (response.status === 201) {
         console.log("API 요청이 성공했습니다.");
       } else {
         console.error("API 요청이 실패했습니다.");
