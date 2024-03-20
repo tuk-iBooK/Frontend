@@ -1,38 +1,55 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SummarySettingPage: React.FC = () => {
+  const [story, setStory] = useState<number | 0>(0);
+
+  const location = useLocation();
+  const settingInfo = { ...location.state };
   const [summary, setSummary] = useState<string>("");
   const navigate = useNavigate();
-  const location = useLocation();
+
+  useEffect(() => {
+    const storedStory = localStorage.getItem("story");
+    if (storedStory) {
+      setStory(parseInt(storedStory));
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const requestData = {
-      genre: location.state?.selectedGenres?.join(",") || "",
-      time_period: location.state?.selectedTimePeriod || "",
-      back_ground: location.state?.selectedBackground || "",
-      summary: summary,
-    };
-
+    console.log("genre:", `${settingInfo.genre}`);
+    console.log("time_period:", `${settingInfo.period}`);
+    console.log("back_ground:", `${settingInfo.background}`);
     console.log("Summary:", summary);
 
     try {
       // API 요청
-      const response = await fetch(
+      const token = localStorage.getItem("id");
+      if (!token) {
+        console.error("토큰이 없습니다.");
+        return;
+      }
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      };
+      const response = await axios.post(
         "http://localhost:8000/api/story/register/background/",
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(requestData),
-        }
+          story: story,
+          genre: "fantasy",
+          //   genre: `${settingInfo.genre}`,
+          time_period: `${settingInfo.period}`,
+          back_ground: `${settingInfo.background}`,
+          summary: summary,
+        },
+        config
       );
-
       if (response.status === 200) {
         console.log("API 요청이 성공했습니다.");
       } else {

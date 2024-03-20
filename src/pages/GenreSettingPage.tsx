@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const GenreSettingPage: React.FC = () => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [additionalGenre, setAdditionalGenre] = useState<string>("");
+
   const navigate = useNavigate();
 
   const handleGenreClick = (genre: string) => {
@@ -31,7 +32,7 @@ const GenreSettingPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Selected genres:", selectedGenres);
-    navigate("/period", { state: { selectedGenres } });
+    navigate("/period", { state: { genre: selectedGenres } });
   };
 
   const handleNextPage = () => {

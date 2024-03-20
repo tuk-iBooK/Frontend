@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const PeriodSettingPage: React.FC = () => {
+  const location = useLocation();
+  const settingInfo = { ...location.state };
   const [selectPeriods, setSelectedPeriods] = useState<string[]>([]);
   const [additionalPeriod, setAdditionalPeriod] = useState<string>("");
   const navigate = useNavigate();
@@ -32,8 +34,14 @@ const PeriodSettingPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Selected genres:", `${settingInfo.genre}`);
     console.log("Selected periods:", selectPeriods);
-    navigate("/background", { state: { selectPeriods } });
+    navigate("/background", {
+      state: {
+        genre: `${settingInfo.genre}`,
+        period: selectPeriods,
+      },
+    });
   };
 
   const handleGoBack = () => {

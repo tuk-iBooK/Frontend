@@ -4,6 +4,7 @@ import axios from "axios";
 
 const CharacterSettingPage: React.FC = () => {
   const location = useLocation();
+  const settingInfo = { ...location.state };
   const navigate = useNavigate();
   const { state } = location;
   // const story = state?.story;
@@ -82,7 +83,13 @@ const CharacterSettingPage: React.FC = () => {
       console.log("사용자 토큰:", token);
       if (response.status === 201) {
         console.log("API 요청이 성공했습니다.");
-        navigate("/summary");
+        navigate("/summary", {
+          state: {
+            genre: `${settingInfo.genre}`,
+            period: `${settingInfo.period}`,
+            background: `${settingInfo.background}`,
+          },
+        });
       } else {
         console.error("API 요청이 실패했습니다.");
       }

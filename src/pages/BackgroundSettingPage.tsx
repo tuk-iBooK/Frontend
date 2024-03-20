@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const BackgroundSettingPage: React.FC = () => {
+  const location = useLocation();
+  const settingInfo = { ...location.state };
   const [selectedBackgrounds, setSelectedBackgrounds] = useState<string[]>([]);
   const [additionalBackground, setAdditionalBackground] = useState<string>("");
   const navigate = useNavigate();
@@ -35,8 +37,16 @@ const BackgroundSettingPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Selected genres:", `${settingInfo.genre}`);
+    console.log("Selected periods:", `${settingInfo.period}`);
     console.log("Selected backgrounds:", selectedBackgrounds);
-    navigate("/character", { state: { selectedBackgrounds } });
+    navigate("/character", {
+      state: {
+        genre: `${settingInfo.genre}`,
+        period: `${settingInfo.period}`,
+        background: selectedBackgrounds,
+      },
+    });
   };
 
   const handleGoBack = () => {
