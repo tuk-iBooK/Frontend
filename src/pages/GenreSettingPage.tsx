@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const GenreSettingPage: React.FC = () => {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -31,6 +32,7 @@ const GenreSettingPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Selected genres:", selectedGenres);
+    navigate("/period", { state: { selectedGenres } });
   };
 
   const handleNextPage = () => {
@@ -59,27 +61,7 @@ const GenreSettingPage: React.FC = () => {
             />
           </div>
           <div className="flex justify-center items-center m-4">
-            <div className="bg-[#FFF0A3] p-4 rounded-2xl w-1/5 flex justify-center items-center">
-              {/* <button
-                className="w-12 h-12 bg-blue-500 text-white rounded-full flex justify-center items-center"
-                onClick={handleNextPage}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button> */}
-            </div>
+            <div className="bg-[#FFF0A3] p-4 rounded-2xl w-1/5 flex justify-center items-center"></div>
             <div className="flex flex-col w-4/5 space-y-4 p-4 bg-white border border-gray-300 justify-center items-center rounded-2xl">
               {["환상", "모험", "동화", "신화", "공상과학"].map(
                 (genre, index) => (

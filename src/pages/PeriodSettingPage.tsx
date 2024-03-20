@@ -33,6 +33,7 @@ const PeriodSettingPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Selected periods:", selectPeriods);
+    navigate("/background", { state: { selectPeriods } });
   };
 
   const handleGoBack = () => {

@@ -36,6 +36,7 @@ const BackgroundSettingPage: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Selected backgrounds:", selectedBackgrounds);
+    navigate("/character", { state: { selectedBackgrounds } });
   };
 
   const handleGoBack = () => {

@@ -2,40 +2,43 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const CharacterSettingPage: React.FC = () => {
-  const [selectedCharacters, setSelectedCharacters] = useState<string[]>([]);
-  const [additionalCharacter, setAdditionalCharacter] = useState<string>("");
+  const [characters, setCharacters] = useState<Character[]>([]);
+  const [name, setName] = useState<string>("");
+  const [age, setAge] = useState<number>(1);
+  const [gender, setGender] = useState<string>("남");
+  const [personality, setPersonality] = useState<string>("");
   const navigate = useNavigate();
 
-  const handleCharacterClick = (character: string) => {
-    setSelectedCharacters((prevCharacters) =>
-      prevCharacters.includes(character)
-        ? prevCharacters.filter((g) => g !== character)
-        : [...prevCharacters, character]
-    );
-  };
+  interface Character {
+    name: string;
+    age: number;
+    gender: string;
+    personality: string;
+  }
 
   const handleAddCharacter = () => {
-    if (additionalCharacter.trim() !== "") {
-      const trimmedCharacter = additionalCharacter.trim();
-      if (!selectedCharacters.includes(trimmedCharacter)) {
-        setSelectedCharacters((prevCharacters) => [
-          ...prevCharacters,
-          trimmedCharacter,
-        ]);
-      }
-      // setAdditionalCharacter(""); // 입력값 초기화
+    if (
+      characters.length < 3 &&
+      name.trim() !== "" &&
+      personality.trim() !== ""
+    ) {
+      setCharacters([...characters, { name, age, gender, personality }]);
+      setName("");
+      setAge(1);
+      setGender("남");
+      setPersonality("");
     }
   };
 
-  const handleRemoveCharacter = (character: string) => {
-    setSelectedCharacters((prevCharacters) =>
-      prevCharacters.filter((g) => g !== character)
-    );
+  const handleRemoveCharacter = (index: number) => {
+    const updatedCharacters = [...characters];
+    updatedCharacters.splice(index, 1);
+    setCharacters(updatedCharacters);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Selected Characters:", selectedCharacters);
+    console.log("Selected Characters:", characters);
   };
 
   const handleGoBack = () => {
@@ -53,21 +56,8 @@ const CharacterSettingPage: React.FC = () => {
           <div className="text-xl font-bold text-black font-['Inria'] p-4">
             4. 원하는 이야기의 등장인물을 설정하세요
           </div>
-          {/* <div className=""> */}
-          <input
-            type="text"
-            value={additionalCharacter}
-            onChange={(e) => setAdditionalCharacter(e.target.value)}
-            placeholder="원하는 공간적 배경을 입력하여 직접 추가하세요"
-            className="w-3/5 py-2 p-4 border border-gray-300 rounded-2xl"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && additionalCharacter.trim() !== "") {
-                handleAddCharacter();
-              }
-            }}
-          />
-          {/* </div> */}
-          <div className="flex justify-center items-center m-4">
+          {/* /여기부터 */}
+          <div className="bg-[#FFF0A3] p-4 rounded-2xl flex justify-center items-center">
             <div className="bg-[#FFF0A3] p-4 rounded-2xl w-1/5 flex justify-center items-center">
               <button
                 className="w-12 h-12  bg-white text-gray-500 rounded-full flex justify-center items-center shadow-lg hover:shadow-none hover:bg-[#EBEBEB] hover:text-white"
@@ -89,20 +79,54 @@ const CharacterSettingPage: React.FC = () => {
                 </svg>
               </button>
             </div>
-            <div className="flex flex-col w-4/5 space-y-4 p-4 bg-white border border-gray-300 justify-center items-center rounded-2xl">
-              {["숲", "뭐", "뭐지", "머", "배경"].map((Character, index) => (
-                <button
-                  key={index}
-                  className={`py-2 px-4 rounded-full w-40 h-10  shadow-lg ${
-                    selectedCharacters.includes(Character)
-                      ? "bg-[#FFF0A3] text-black shadow-none"
-                      : "bg-[#EBEBEB] text-black"
-                  } hover:bg-[#FFF0A3] hover:shadow-none`}
-                  onClick={() => handleCharacterClick(Character)}
-                >
-                  {Character}
-                </button>
-              ))}
+
+            <div className="flex flex-col w-4/5 space-y-4 p-8 bg-white border border-gray-300 justify-center items-center rounded-2xl">
+              <div className="w-full space-y-4 ">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="등장인물의 이름을 입력하세요"
+                  className="w-full py-2 p-4 border border-gray-300 rounded-2xl"
+                />
+
+                <div className="flex w-full space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <span>성별:</span>
+                    <select
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="py-2 px-4 border border-gray-300 rounded-2xl"
+                    >
+                      <option value="남">남</option>
+                      <option value="여">여</option>
+                    </select>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span>나이:</span>
+                    <select
+                      value={age}
+                      onChange={(e) => setAge(parseInt(e.target.value))}
+                      className="py-2 px-4 border border-gray-300 rounded-2xl"
+                    >
+                      {Array.from({ length: 100 }, (_, index) => (
+                        <option key={index} value={index + 1}>
+                          {index + 1} 살
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="">
+                  <textarea
+                    value={personality}
+                    onChange={(e) => setPersonality(e.target.value)}
+                    placeholder="등장인물의 성격을 입력하세요"
+                    className="w-full py-6 px-6 border border-gray-300 rounded-2xl"
+                  />
+                </div>
+              </div>
             </div>
             <div className="p-4 rounded-2xl w-1/5 flex justify-center items-center">
               <button
@@ -126,59 +150,64 @@ const CharacterSettingPage: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
-      </div>
 
-      <div className="w-3/4 flex p-4 bg-[#FFF0A3] rounded-2xl justify-center shadow-lg">
-        <div className=" w-3/4 bg-white border border-gray-300 text-m text-black font-['Inria'] p-6 rounded-2xl">
-          등장인물 :{" "}
-          {selectedCharacters.map((Character, index) => (
+          <div className="flex justify-center items-center m-4">
             <button
-              key={index}
-              className="px-6 py-1 bg-[#FFF0A3] text-black rounded-2xl m-2"
-              onClick={() => handleRemoveCharacter(Character)}
+              onClick={handleAddCharacter}
+              className="w-12 h-12 bg-white text-gray-500 rounded-full flex justify-center items-center shadow-lg hover:shadow-none hover:bg-[#EBEBEB] hover:text-white"
             >
-              <div className="flex">
-                <span className="ml-2">{Character}</span>
-                <div className="p-1">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4 text-gray-300"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                    <circle
-                      cx="12"
-                      cy="12"
-                      r="9"
-                      fill="gray"
-                      className="text-gray-400"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 15l6-6M15 15l-6-6"
-                    />
-                  </svg>
-                </div>
-              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                />
+              </svg>
             </button>
-          ))}
+          </div>
+        </div>
+        <div className="w-full flex p-4 bg-[#FFF0A3] rounded-2xl justify-center shadow-lg">
+          <div className="w-3/4 bg-white border border-gray-300 text-m text-black font-['Inria'] p-6 rounded-2xl">
+            설정한 등장인물 :
+            <div className="space-y-4">
+              {characters.map((character, index) => (
+                <div key={index} className="flex justify-between items-center">
+                  <div>
+                    <span>
+                      {character.name} ({character.age} 살, {character.gender})
+                      - {character.personality}
+                    </span>
+                  </div>
+                  <div>
+                    <button
+                      onClick={() => handleRemoveCharacter(index)}
+                      className="px-4 py-2 bg-[#EBEBEB] text-black rounded-2xl hover:bg-[#FFF0A3]"
+                    >
+                      삭제
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <button
+            className="mb-4 mt-8 px-16 py-3 pr-16 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+            onClick={handleSubmit}
+          >
+            선택 완료
+          </button>
         </div>
       </div>
-      <button
-        className="mb-4 mt-8 px-16 py-3 pr-16 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
-        onClick={handleSubmit}
-      >
-        선택 완료
-      </button>
     </div>
   );
 };

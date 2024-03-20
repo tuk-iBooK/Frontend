@@ -1,8 +1,18 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const MainPage: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("id");
+    if (token) {
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   const handleStart = async () => {
     try {
       const token = localStorage.getItem("id");
@@ -24,9 +34,16 @@ const MainPage: React.FC = () => {
 
       const { story_id } = response.data;
       console.log("생성된 story_id:", story_id);
+
+      navigate(`/genre?story_id=${story_id}`);
     } catch (error) {
       console.error("API 호출 중 오류가 발생했습니다:", error);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("id");
+    setIsLoggedIn(false);
   };
 
   return (
@@ -40,18 +57,29 @@ const MainPage: React.FC = () => {
           시작하기
         </button>
         <div>
-          <Link
-            to="/Login"
-            className="mr-4 text-gray-500 hover:underline hover:text-black"
-          >
-            로그인
-          </Link>
-          <Link
-            to="/SignUp"
-            className="text-gray-500 hover:underline hover:text-black"
-          >
-            회원가입
-          </Link>
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="mr-4 text-gray-500 hover:underline hover:text-black"
+            >
+              로그아웃
+            </button>
+          ) : (
+            <>
+              <Link
+                to="/Login"
+                className="mr-4 text-gray-500 hover:underline hover:text-black"
+              >
+                로그인
+              </Link>
+              <Link
+                to="/SignUp"
+                className="text-gray-500 hover:underline hover:text-black"
+              >
+                회원가입
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </div>
