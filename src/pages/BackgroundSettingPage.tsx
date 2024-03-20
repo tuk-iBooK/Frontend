@@ -40,7 +40,7 @@ const BackgroundSettingPage: React.FC = () => {
   };
 
   const handleGoBack = () => {
-    navigate("/genre");
+    navigate("/period");
   };
 
   const handleNextPage = () => {

@@ -1,18 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const CharacterSettingPage: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { state } = location;
-  const { story } = state || { story: null };
+  // const story = state?.story;
+  const [story, setStory] = useState<number | 0>(0);
 
   const [characters, setCharacters] = useState<Character[]>([]);
   const [name, setName] = useState<string>("");
   const [age, setAge] = useState<number>(1);
   const [gender, setGender] = useState<string>("남");
   const [personality, setPersonality] = useState<string>("");
-  const navigate = useNavigate();
 
   interface Character {
     story: number;
@@ -21,6 +22,12 @@ const CharacterSettingPage: React.FC = () => {
     name: string;
     personality: string;
   }
+  useEffect(() => {
+    const storedStory = localStorage.getItem("story");
+    if (storedStory) {
+      setStory(parseInt(storedStory));
+    }
+  }, []);
 
   const handleAddCharacter = () => {
     if (
@@ -42,10 +49,11 @@ const CharacterSettingPage: React.FC = () => {
     e.preventDefault();
 
     console.log("Selected Characters:", characters);
-    console.log("age:", age);
     console.log("name:", name);
-    console.log("personality:", personality);
-    console.log("gender:", gender);
+    console.log("story", story);
+    console.log("age", age);
+    console.log("gender", gender);
+    console.log("personality", personality);
 
     try {
       const token = localStorage.getItem("id");
@@ -63,12 +71,7 @@ const CharacterSettingPage: React.FC = () => {
       const response = await axios.post(
         "http://localhost:8000/api/story/register/character/",
         {
-          // story: state?.story,
-          // age: 3,
-          // name: "김하은",
-          // personality: "귀여움",
-          // gender: "남",
-          story: state?.story,
+          story,
           age,
           name,
           personality,

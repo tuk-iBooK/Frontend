@@ -5,11 +5,18 @@ import axios from "axios";
 const MainPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const [story, setStory] = useState<number | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("id");
     if (token) {
       setIsLoggedIn(true);
+    }
+  }, []);
+  useEffect(() => {
+    const storedStory = localStorage.getItem("story");
+    if (storedStory) {
+      setStory(parseInt(storedStory));
     }
   }, []);
 
@@ -34,8 +41,9 @@ const MainPage: React.FC = () => {
 
       const { story } = response.data;
       console.log("생성된 story:", story);
-
-      navigate(`/character`, { state: { token, story } });
+      setStory(story);
+      localStorage.setItem("story", story.toString()); // story 값을 로컬 스토리지에 저장
+      navigate("/genre");
     } catch (error) {
       console.error("API 호출 중 오류가 발생했습니다:", error);
     }
