@@ -1,8 +1,14 @@
 // src/redux/store.ts
 
-import { createStore } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authReducer";
+import genreReducer from "..//features/genreSlice";
 
-const store = createStore(authReducer);
+const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    genre: genreReducer, // genreSlice.reducer를 추가
+  },
+});
 
 export default store;
