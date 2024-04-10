@@ -3,6 +3,7 @@ import authReducer from "./authReducer";
 import genreReducer from "../features/genreSlice";
 import backgroundReducer from "../features/backgroundSlice";
 import periodReducer from "../features/periodSlice";
+import characterReducer from "../features/characterSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     genre: genreReducer,
     background: backgroundReducer,
     period: periodReducer,
+    character: characterReducer,
   },
 });
 

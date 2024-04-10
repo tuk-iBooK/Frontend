@@ -1,34 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { addCharacter, removeCharacter } from "../features/characterSlice";
 import axios from "axios";
+
+interface Character {
+  story: number;
+  age: number;
+  gender: string;
+  name: string;
+  personality: string;
+}
 
 const CharacterSettingPage: React.FC = () => {
   const location = useLocation();
-  const settingInfo = { ...location.state };
   const navigate = useNavigate();
-  const { state } = location;
-  // const story = state?.story;
-  const [story, setStory] = useState<number | 0>(0);
+  const dispatch = useDispatch();
 
-  const [characters, setCharacters] = useState<Character[]>([]);
+  const characters = useSelector(
+    (state: any) => state.character.characters as Character[]
+  );
+
+  const settingInfo = { ...location.state };
+
   const [name, setName] = useState<string>("");
   const [age, setAge] = useState<number>(1);
   const [gender, setGender] = useState<string>("남");
   const [personality, setPersonality] = useState<string>("");
-
-  interface Character {
-    story: number;
-    age: number;
-    gender: string;
-    name: string;
-    personality: string;
-  }
-  useEffect(() => {
-    const storedStory = localStorage.getItem("story");
-    if (storedStory) {
-      setStory(parseInt(storedStory));
-    }
-  }, []);
 
   const handleAddCharacter = () => {
     if (
@@ -36,22 +34,22 @@ const CharacterSettingPage: React.FC = () => {
       name.trim() !== "" &&
       personality.trim() !== ""
     ) {
-      setCharacters([...characters, { story, name, age, gender, personality }]);
+      dispatch(addCharacter({ story: 0, name, age, gender, personality }));
+      setName("");
+      setAge(1);
+      setGender("남");
+      setPersonality("");
     }
   };
 
   const handleRemoveCharacter = (index: number) => {
-    const updatedCharacters = [...characters];
-    updatedCharacters.splice(index, 1);
-    setCharacters(updatedCharacters);
+    dispatch(removeCharacter(index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     console.log("Selected Characters:", characters);
-    console.log("name:", name);
-    console.log("story", story);
     console.log("age", age);
     console.log("gender", gender);
     console.log("personality", personality);
@@ -68,11 +66,9 @@ const CharacterSettingPage: React.FC = () => {
           "Content-Type": "application/json",
         },
       };
-      console.log(state);
       const response = await axios.post(
         "http://localhost:8000/api/story/register/character/",
         {
-          story,
           age,
           name,
           personality,
@@ -98,7 +94,7 @@ const CharacterSettingPage: React.FC = () => {
     }
   };
   const handleGoBack = () => {
-    navigate("/background");
+    navigate("/period");
   };
 
   const handleNextPage = () => {
