@@ -39,8 +39,6 @@ const BackgroundSettingPage: React.FC = () => {
     "도시 공원",
   ];
 
-  const fantasyBackgrounds = ["마법의 숲", "숨겨진 마을", "용의 동굴"];
-
   const handleBackgroundClick = (background: string) => {
     if (selectedBackgrounds.includes(background)) {
       dispatch(removeBackground(background));
