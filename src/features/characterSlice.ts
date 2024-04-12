@@ -2,7 +2,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface Character {
-  story: number;
+  // story: number;
   age: number;
   gender: string;
   name: string;

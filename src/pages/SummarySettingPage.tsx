@@ -1,44 +1,34 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { setSummary } from "../features/summarySlice";
-import { setStory } from "../features/storySlice";
 
 const SummarySettingPage: React.FC = () => {
-  const story = useSelector(
-    (state: { story: { value: number } }) => state.story.value
-  );
-  const summary = useSelector(
-    (state: { summary: { value: string } }) => state.summary.value
-  );
+  const story = useSelector((state: any) => state.story.value) as number;
+  const summary = useSelector((state: any) => state.summary.value) as string;
+  const genre = useSelector(
+    (state: any) => state.genre.selectedGenres
+  ) as string[];
+  const back_ground = useSelector(
+    (state: any) => state.background.selectedBackgrounds
+  ) as string[];
+  const time_period = useSelector(
+    (state: any) => state.period.selectedPeriods
+  ) as string[];
 
-  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // const settingInfo = { ...location.state };
-
-  useEffect(() => {
-    const storedStory = localStorage.getItem("story");
-    if (storedStory !== null) {
-      dispatch(setStory(parseInt(storedStory)));
-    }
-  }, [dispatch]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const settingInfo = location.state as {
-      genre: string;
-      period: string;
-      background: string;
-    };
-
-    console.log("genre:", settingInfo.genre);
-    console.log("time_period:", settingInfo.period);
-    console.log("back_ground:", settingInfo.background);
-    console.log("Summary:", summary);
+    console.log("Sending data:", {
+      story,
+      genre,
+      time_period,
+      back_ground,
+      summary,
+    });
 
     //api 요청 부분
     try {
@@ -53,13 +43,16 @@ const SummarySettingPage: React.FC = () => {
           "Content-Type": "application/json",
         },
       };
+
+      console.log("사용자 토큰:", token);
       const response = await axios.post(
         "http://localhost:8000/api/story/register/background/",
         {
           story,
-          genre: settingInfo.genre,
-          time_period: settingInfo.period,
-          back_ground: settingInfo.background,
+          genre: "fantasy",
+          // genre: genre.join(","), //배열이면 문자열로 변환
+          time_period: time_period.join(", "),
+          back_ground: back_ground.join(", "),
           summary,
         },
         config
