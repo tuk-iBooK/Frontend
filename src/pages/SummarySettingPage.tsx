@@ -59,7 +59,7 @@ const SummarySettingPage: React.FC = () => {
       );
       if (response.status === 201) {
         console.log("API 요청이 성공했습니다.");
-        // navigate("로딩페이지")
+        navigate("/firstresult");
       } else {
         console.error("API 요청이 실패했습니다.");
       }

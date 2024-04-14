@@ -1,61 +1,78 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import axios from "axios";
 
 const FirstResultPage: React.FC = () => {
-  const [result, setResult] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
+  const story = useSelector((state: any) => state.story.value as number);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [choices, setChoices] = useState([]);
 
   useEffect(() => {
-    const fetchResult = async () => {
+    const fetchData = async () => {
       try {
-        const storyId = localStorage.getItem("story");
-        if (!storyId) {
-          setError("Story ID가 잘못 됐어요");
+        const token = localStorage.getItem("id");
+        if (!token) {
+          console.error("No token provided.");
           return;
         }
-
-        const response = await axios.get(
-          `http://localhost:8000/api/story/register/chatgpt/`,
-          {
-            params: { story_id: storyId },
-          }
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        };
+        const response = await axios.post(
+          "http://localhost:8000/api/story/register/chatgpt/",
+          { story: story },
+          config
         );
 
-        if (response.status === 200 && response.data) {
-          setResult(response.data.result);
+        if (response.status === 200) {
+          const answer = response.data.answer;
+          const titleMatch = answer.match(/제목: (.*)\n/);
+          if (titleMatch) setTitle(titleMatch[1]);
+
+          const contentStart = answer.indexOf("제목: ") + titleMatch[0].length;
+          const choiceStart = answer.lastIndexOf("\nA. ");
+          if (choiceStart > -1) {
+            setContent(answer.substring(contentStart, choiceStart));
+            const choiceText = answer.substring(choiceStart);
+            const choicesArray = choiceText
+              .split("\n")
+              .filter(
+                (line: string) =>
+                  line.startsWith("A.") ||
+                  line.startsWith("B.") ||
+                  line.startsWith("C.")
+              );
+
+            setChoices(choicesArray);
+          } else {
+            setContent(answer.substring(contentStart));
+          }
         } else {
-          setError("결과 가져오기 실패");
+          console.error("Failed to fetch data from API.");
         }
-      } catch (err) {
-        setError("결과를 불러오는 도중 오류 발생");
-        console.error(err);
+      } catch (error) {
+        console.error("Error fetching data from API:", error);
       }
     };
 
-    fetchResult();
-  }, []);
+    fetchData();
+  }, [story]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      {result && (
-        <div className="mt-4 p-4 border rounded-lg">
-          <p>결과:</p>
-          <p>{result}</p>
-        </div>
-      )}
-      {error && (
-        <div className="mt-4 p-4 border rounded-lg text-red-500">
-          오류: {error}
-        </div>
-      )}
-      <button
-        onClick={() => navigate("/")}
-        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
-      >
-        홈으로
-      </button>
+    <div className="container mx-auto my-8 p-4">
+      <div className="prose">
+        <h1>{title}</h1>
+        <p>{content}</p>
+      </div>
+      <div>
+        {choices.map((choice, index) => (
+          <p key={index}>{choice}</p>
+        ))}
+      </div>
     </div>
   );
 };
