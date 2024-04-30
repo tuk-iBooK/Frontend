@@ -20,7 +20,7 @@ const CharacterSettingPage: React.FC = () => {
     (state: any) => state.character.characters as Character[]
   );
 
-  const settingInfo = { ...location.state };
+  // const settingInfo = { ...location.state };
 
   const story = useSelector((state: any) => state.story.value as number);
 
