@@ -1,4 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+// interface StoryState {
+//   value: number; // 이 부분이 story 아이디를 저장하는 상태
+// }
 
 export const storySlice = createSlice({
   name: "story",
@@ -6,7 +10,7 @@ export const storySlice = createSlice({
     value: 0,
   },
   reducers: {
-    setStory: (state, action) => {
+    setStory: (state, action: PayloadAction<number>) => {
       state.value = action.payload;
     },
   },

@@ -1,9 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { addUserChoice, updateStory, AppState } from "../features/appSlice";
 import axios from "axios";
 
 const FirstResultPage: React.FC = () => {
+  const dispatch = useDispatch();
+
   const story = useSelector((state: any) => state.story.value as number);
+  const userChoices = useSelector((state: AppState) => state.userChoices);
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [choices, setChoices] = useState<string[]>([]);
@@ -35,7 +40,8 @@ const FirstResultPage: React.FC = () => {
       );
 
       if (response.status === 200) {
-        const answer = response.data.answer;
+        const { answer } = response.data;
+        // const answer = response.data.answer;
         const titleMatch = answer.match(/제목: (.*)\n/);
         if (titleMatch) setTitle(titleMatch[1]);
 
@@ -70,7 +76,6 @@ const FirstResultPage: React.FC = () => {
   }, [fetchData]);
 
   const handleChoice = async (choice: string) => {
-    // const choicePrefix = choice.trim().charAt(0);
     const config = fetchConfig();
     if (!config) return;
 
@@ -81,10 +86,17 @@ const FirstResultPage: React.FC = () => {
         config
       );
 
-      if (response.status === 200 && response.data.next_story) {
-        setTitle(response.data.next_story.title);
-        setContent(response.data.next_story.content);
-        setChoices(response.data.next_story.choices);
+      if (response.status === 200 && response.data.answer) {
+        const { answer } = response.data;
+
+        // setTitle(response.data.answer.title);
+        setContent(response.data.answer.content);
+        setChoices(response.data.answer.choices);
+
+        //선택지 및 이전 스토리 업데이트
+        dispatch(addUserChoice(choice));
+        dispatch(updateStory(answer.id));
+        console.log("API 요청이 성공했습니다.");
       } else {
         console.error("API 요청이 실패했습니다.", response); //response값을 따로 저장해서 나중에 보내야함 ++ 수정 : 그림생성api를 따로 생성 저장
       }
@@ -96,7 +108,7 @@ const FirstResultPage: React.FC = () => {
   return (
     <div className="container mx-auto my-8 p-4">
       <div className="prose">
-        <h1>{title}</h1>
+        <h1>{title ? title : ""}</h1>
         <p>{content}</p>
       </div>
       <div>
