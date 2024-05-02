@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addUserChoice, updateStory, AppState } from "../features/appSlice";
 import axios from "axios";
+import Loading from "../components/Loading";
 
 const FirstResultPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ const FirstResultPage: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [choices, setChoices] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   // API 호출 설정을 추출 및 중복을 제거하기 위한 함수
   const fetchConfig = () => {
@@ -31,7 +33,7 @@ const FirstResultPage: React.FC = () => {
   const fetchData = useCallback(async () => {
     const config = fetchConfig();
     if (!config) return;
-
+    setLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:8000/api/story/register/chatgpt/",
@@ -65,9 +67,11 @@ const FirstResultPage: React.FC = () => {
         }
       } else {
         console.error("API 요청이 실패했습니다.");
+        setLoading(true);
       }
     } catch (error) {
       console.error("API 요청 중 오류가 발생했습니다:", error);
+      setLoading(true);
     }
   }, [story]);
 
@@ -79,6 +83,7 @@ const FirstResultPage: React.FC = () => {
     const config = fetchConfig();
     if (!config) return;
 
+    setLoading(true);
     try {
       const response = await axios.post(
         "http://localhost:8000/api/story/register/chatgpt/",
@@ -97,9 +102,11 @@ const FirstResultPage: React.FC = () => {
         console.log("API 요청이 성공했습니다.");
       } else {
         console.error("API 요청이 실패했습니다.", response); //response값을 따로 저장해서 나중에 보내야함 ++ 수정 : 그림생성api를 따로 생성 저장
+        setLoading(true);
       }
     } catch (error) {
       console.error("API 요청 중 오류가 발생했습니다:", error);
+      setLoading(true);
     }
   };
 

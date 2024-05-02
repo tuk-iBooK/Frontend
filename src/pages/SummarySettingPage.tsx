@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { setSummary } from "../features/summarySlice";
+import Loading from "../components/Loading";
 
 const SummarySettingPage: React.FC = () => {
   const story = useSelector((state: any) => state.story.value) as number;
@@ -15,6 +17,7 @@ const SummarySettingPage: React.FC = () => {
   const time_period = useSelector(
     (state: any) => state.period.selectedPeriods
   ) as string[];
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -29,7 +32,7 @@ const SummarySettingPage: React.FC = () => {
       back_ground,
       summary,
     });
-
+    setLoading(true);
     //api 요청 부분
     try {
       const token = localStorage.getItem("id");
@@ -62,9 +65,11 @@ const SummarySettingPage: React.FC = () => {
         navigate("/firstresult");
       } else {
         console.error("API 요청이 실패했습니다.");
+        setLoading(false);
       }
     } catch (error) {
       console.error("API 요청 중 오류가 발생했습니다:", error);
+      setLoading(false);
     }
   };
 
