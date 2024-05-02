@@ -89,11 +89,9 @@ const FirstResultPage: React.FC = () => {
       if (response.status === 200 && response.data.answer) {
         const { answer } = response.data;
 
-        // setTitle(response.data.answer.title);
         setContent(response.data.answer.content);
         setChoices(response.data.answer.choices);
 
-        //선택지 및 이전 스토리 업데이트
         dispatch(addUserChoice(choice));
         dispatch(updateStory(answer.id));
         console.log("API 요청이 성공했습니다.");
@@ -106,21 +104,31 @@ const FirstResultPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto my-8 p-4">
-      <div className="prose">
-        <h1>{title ? title : ""}</h1>
-        <p>{content}</p>
+    <div className="flex flex-col max-w-7xl bg-[#E7E3E0] opacity-75 h-screen mx-auto my-8 p-4 shadow-2xl">
+      <div className="flex flex-grow">
+        <div className="flex-1 p-2 border-r border-gray-300 bg-[#FDF9F6] overflow-y-auto shadow-4xl">
+          <div className="prose">
+            <h1>{title || ""}</h1>
+            <p>{content}</p>
+          </div>
+          {choices.map((choice, index) => (
+            <button
+              key={index}
+              onClick={() => handleChoice(choice)}
+              className="w-3/4 py-2 mb-4 rounded-2xl text-black text-ml bg-[#FFF0A3] hover:bg-[#FFF8D6] text-center shadow-lg hover:shadow-none"
+            >
+              {choice}
+            </button>
+          ))}
+        </div>
+        <div className="flex-1 p-4 bg-[#FDF9F6] overflow-y-auto">
+          {/* 이미지 */}
+          <p>이미지</p>
+        </div>
       </div>
-      <div>
-        {choices.map((choice, index) => (
-          <button
-            key={index}
-            onClick={() => handleChoice(choice)}
-            className="m-2 p-2 bg-blue-500 text-white rounded"
-          >
-            {choice}
-          </button>
-        ))}
+      <div className="w-full bg-[#FDF9F6] border-t border-gray-300 p-3">
+        {/* 페이지 번호 */}
+        <p>1</p>
       </div>
     </div>
   );
