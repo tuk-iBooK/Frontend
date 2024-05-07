@@ -1,21 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface AppState {
+export interface StoryState {
+  id: number;
   userChoices: string[];
-  title: string;
+  title?: string;
   content: string;
   choices: string[];
 }
 
-const initialState: AppState = {
+const initialState: StoryState = {
+  id: 0,
   userChoices: [],
   title: "",
   content: "",
   choices: [],
 };
 
-const appSlice = createSlice({
-  name: "app",
+const storySlice = createSlice({
+  name: "story",
   initialState,
   reducers: {
     addUserChoice(state, action: PayloadAction<string>) {
@@ -24,17 +26,19 @@ const appSlice = createSlice({
     updateStory(
       state,
       action: PayloadAction<{
-        title: string;
+        title?: string;
         content: string;
         choices: string[];
       }>
     ) {
-      state.title = action.payload.title;
+      if (action.payload.title !== undefined) {
+        state.title = action.payload.title;
+      }
       state.content = action.payload.content;
       state.choices = action.payload.choices;
     },
   },
 });
 
-export const { addUserChoice, updateStory } = appSlice.actions;
-export default appSlice.reducer;
+export const { addUserChoice, updateStory } = storySlice.actions;
+export default storySlice.reducer;

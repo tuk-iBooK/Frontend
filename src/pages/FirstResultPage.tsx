@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addUserChoice, updateStory, AppState } from "../features/appSlice";
+import { addUserChoice, updateStory, StoryState } from "../features/appSlice";
 import axios from "axios";
-import Loading from "../components/Loading";
+import Spinner from "../components/Loading";
 
 const FirstResultPage: React.FC = () => {
   const dispatch = useDispatch();
 
   const story = useSelector((state: any) => state.story.value as number);
-  const userChoices = useSelector((state: AppState) => state.userChoices);
+  const userChoices = useSelector((state: StoryState) => state.userChoices);
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -18,6 +18,7 @@ const FirstResultPage: React.FC = () => {
   // API 호출 설정을 추출 및 중복을 제거하기 위한 함수
   const fetchConfig = () => {
     const token = localStorage.getItem("id");
+    console.log("현재 토큰 :", token);
     if (!token) {
       console.error("토큰이 없습니다.");
       return null;
@@ -37,7 +38,7 @@ const FirstResultPage: React.FC = () => {
     try {
       const response = await axios.post(
         "http://localhost:8000/api/story/register/chatgpt/",
-        { story },
+        { story_id: story },
         config
       );
 
@@ -87,26 +88,29 @@ const FirstResultPage: React.FC = () => {
     try {
       const response = await axios.post(
         "http://localhost:8000/api/story/register/chatgpt/",
-        { story, user_choice: choice }, //선택지 내용 전체를 서버로 전송하게 수정
+        { story_id: story, user_choice: choice },
         config
       );
 
       if (response.status === 200 && response.data.answer) {
-        const { answer } = response.data;
+        const { content, choices, id } = response.data.answer;
 
-        setContent(response.data.answer.content);
-        setChoices(response.data.answer.choices);
-
-        dispatch(addUserChoice(choice));
-        dispatch(updateStory(answer.id));
+        dispatch(
+          updateStory({
+            title, // This will be undefined if not provided in the response
+            content,
+            choices,
+          })
+        );
         console.log("API 요청이 성공했습니다.");
+        setLoading(false);
       } else {
         console.error("API 요청이 실패했습니다.", response); //response값을 따로 저장해서 나중에 보내야함 ++ 수정 : 그림생성api를 따로 생성 저장
-        setLoading(true);
+        setLoading(false);
       }
     } catch (error) {
       console.error("API 요청 중 오류가 발생했습니다:", error);
-      setLoading(true);
+      setLoading(false);
     }
   };
 
