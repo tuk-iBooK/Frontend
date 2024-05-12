@@ -103,32 +103,38 @@ const FirstResultPage: React.FC = () => {
 
       setLoading(true);
       try {
-        const response = await axios.post(
-          "http://localhost:8000/api/story/register/chatgpt/",
-          { story_id: story, user_choice: choice },
+        // 첫 번째 API 요청: 이야기 저장
+        const saveResponse = await axios.post(
+          "http://localhost:8000/api/story/save_story/",
+          { story_id: story, content: choice },
           config
         );
 
-        if (response.status === 200 && response.data.answer) {
-          const parsedData = parseResponse(response.data.answer);
-          dispatch(
-            updatePage({ pageId: currentPage?.pageId || 0, ...parsedData })
-          );
-          console.log("첫 번째 API 요청이 성공했습니다.");
+        console.log("첫 번째 API 요청 응답 :", saveResponse);
 
-          const saveResponse = await axios.post(
-            "http://localhost:8000/api/story/save_story/",
-            { story_id: story, content: choice }, //content?
+        if (saveResponse.status === 200) {
+          console.log("이야기 저장 성공");
+
+          // 두 번째 API 요청: 이야기 생성
+          const updateResponse = await axios.post(
+            "http://localhost:8000/api/story/register/chatgpt/",
+            { story_id: story, user_choice: choice },
             config
           );
 
-          if (saveResponse.status === 200) {
-            console.log("스토리 저장 성공");
+          console.log("두 번째 API 요청 응답 :", updateResponse);
+
+          if (updateResponse.status === 200 && updateResponse.data.answer) {
+            const parsedData = parseResponse(updateResponse.data.answer);
+            dispatch(
+              updatePage({ pageId: currentPage?.pageId || 0, ...parsedData })
+            );
+            console.log("이야기 생성 요청이 성공했습니다.");
           } else {
-            console.error("스토리 저장 실패 :", saveResponse);
+            console.error("이야기 생성 요청 실패 :", updateResponse);
           }
         } else {
-          console.error("첫 번째 API 요청 실패 :", response);
+          console.error("이야기 저장 실패 :", saveResponse);
         }
       } catch (error) {
         console.error("API 요청 중 오류가 발생했습니다:", error);
@@ -164,7 +170,7 @@ const FirstResultPage: React.FC = () => {
                 </button>
               ))
             ) : (
-              <p>페이지 생성 중...</p>
+              <p></p>
             )}
           </div>
         </div>
