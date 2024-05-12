@@ -29,7 +29,7 @@ function SignUp() {
 
     try {
       const response = await axios.post(
-        "http://0.0.0.0:8000/api/auth/register/",
+        "http://0.0.0.0:8000/api/auth/register/", //http://localhost:8000/api/auth/register/ 이거 이 주소가 맞는데
         formData
       );
 

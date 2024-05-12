@@ -1,55 +1,56 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { addPeriod, removePeriod } from "../features/periodSlice";
 
 const PeriodSettingPage: React.FC = () => {
   const location = useLocation();
   const settingInfo = { ...location.state };
-  const [selectPeriods, setSelectedPeriods] = useState<string[]>([]);
   const [additionalPeriod, setAdditionalPeriod] = useState<string>("");
+  const selectedPeriods = useSelector(
+    (state: any) => state.period.selectedPeriods
+  );
+
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handlePeriodClick = (period: string) => {
-    setSelectedPeriods((prevPeriods) =>
-      prevPeriods.includes(period)
-        ? prevPeriods.filter((g) => g !== period)
-        : [...prevPeriods, period]
-    );
+    if (selectedPeriods.includes(period)) {
+      dispatch(removePeriod(period));
+    } else {
+      dispatch(addPeriod(period));
+    }
   };
 
   const handleAddperiod = () => {
     if (additionalPeriod.trim() !== "") {
-      const trimmedperiod = additionalPeriod.trim();
-      if (!selectPeriods.includes(trimmedperiod)) {
-        setSelectedPeriods((prevPeriods) => [...prevPeriods, trimmedperiod]);
-      }
-      // setAdditionalperiod(""); // 입력값 초기화
+      dispatch(addPeriod(additionalPeriod.trim()));
+      setAdditionalPeriod(""); // 입력값 초기화
     }
-  };
-
-  const handleRemoveperiod = (period: string) => {
-    setSelectedPeriods((prevPeriods) =>
-      prevPeriods.filter((g) => g !== period)
-    );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Selected genres:", `${settingInfo.genre}`);
-    console.log("Selected periods:", selectPeriods);
-    navigate("/background", {
+    console.log("Selected periods:", {
+      state: { period: selectedPeriods },
+    });
+    navigate("/character", {
       state: {
-        genre: `${settingInfo.genre}`,
-        period: selectPeriods,
+        ...settingInfo,
+        period: selectedPeriods,
       },
     });
   };
 
   const handleGoBack = () => {
-    navigate("/genre");
+    navigate("/background");
   };
 
   const handleNextPage = () => {
-    navigate("/background");
+    navigate("/character", {
+      state: { period: selectedPeriods },
+    });
   };
 
   return (
@@ -57,7 +58,7 @@ const PeriodSettingPage: React.FC = () => {
       <div className="w-3/4 mt-24 flex-1 justify-between items-center">
         <div className="bg-[#FFF0A3] p-4 mb-8 rounded-2xl shadow-lg">
           <div className="text-xl font-bold text-black font-['Inria'] p-4">
-            2. 원하는 이야기의 시간적 배경을 선택 혹은 입력하세요
+            3. 원하는 이야기의 시간적 배경을 선택 혹은 입력하세요
           </div>
           <div className="">
             <input
@@ -95,20 +96,43 @@ const PeriodSettingPage: React.FC = () => {
                 </svg>
               </button>
             </div>
-            <div className="flex flex-col w-4/5 space-y-4 p-4 bg-white border border-gray-300 justify-center items-center rounded-2xl">
-              {["현대", "근대", "미래", "중세", "고대"].map((period, index) => (
-                <button
-                  key={index}
-                  className={`py-2 px-4 rounded-full w-40 h-10  shadow-lg ${
-                    selectPeriods.includes(period)
-                      ? "bg-[#FFF0A3] text-black shadow-none"
-                      : "bg-[#EBEBEB] text-black"
-                  } hover:bg-[#FFF0A3] hover:shadow-none`}
-                  onClick={() => handlePeriodClick(period)}
-                >
-                  {period}
-                </button>
-              ))}
+            <div
+              className="w-4/5 bg-white border border-gray-300 justify-center items-center rounded-2xl"
+              style={{ height: "300px" }}
+            >
+              <div
+                className="flex flex-wrap justify-center gap-6 overflow-y-auto p-8"
+                style={{ maxHeight: "100%" }}
+              >
+                {[
+                  "아침",
+                  "낮",
+                  "저녁",
+                  "밤",
+                  "봄",
+                  "여름",
+                  "가을",
+                  "겨울",
+                  "생일",
+                  "축제",
+                  "소풍",
+                  "여행",
+                  "옛날",
+                  "미래",
+                ].map((period, index) => (
+                  <button
+                    key={index}
+                    className={`py-2 px-4 rounded-full w-40 h-10  shadow-lg ${
+                      selectedPeriods.includes(period)
+                        ? "bg-[#FFF0A3] text-black shadow-none"
+                        : "bg-[#EBEBEB] text-black"
+                    } hover:bg-[#FFF0A3] hover:shadow-none`}
+                    onClick={() => handlePeriodClick(period)}
+                  >
+                    {period}
+                  </button>
+                ))}
+              </div>
             </div>
             <div className="p-4 rounded-2xl w-1/5 flex justify-center items-center">
               <button
@@ -138,11 +162,11 @@ const PeriodSettingPage: React.FC = () => {
       <div className="w-3/4 flex p-4 bg-[#FFF0A3] rounded-2xl justify-center shadow-lg">
         <div className=" w-3/4 bg-white border border-gray-300 text-m text-black font-['Inria'] p-6 rounded-2xl">
           선택한 배경 :{" "}
-          {selectPeriods.map((period, index) => (
+          {selectedPeriods.map((period: string, index: number) => (
             <button
               key={index}
               className="px-6 py-1 bg-[#FFF0A3] text-black rounded-2xl m-2"
-              onClick={() => handleRemoveperiod(period)}
+              onClick={() => dispatch(removePeriod(period))}
             >
               <div className="flex">
                 <span className="ml-2">{period}</span>

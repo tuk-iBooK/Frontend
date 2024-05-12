@@ -1,34 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { addCharacter, removeCharacter } from "../features/characterSlice";
 import axios from "axios";
+
+interface Character {
+  age: number;
+  gender: string;
+  name: string;
+  personality: string;
+}
 
 const CharacterSettingPage: React.FC = () => {
   const location = useLocation();
-  const settingInfo = { ...location.state };
   const navigate = useNavigate();
-  const { state } = location;
-  // const story = state?.story;
-  const [story, setStory] = useState<number | 0>(0);
+  const dispatch = useDispatch();
 
-  const [characters, setCharacters] = useState<Character[]>([]);
+  const characters = useSelector(
+    (state: any) => state.character.characters as Character[]
+  );
+
+  // const settingInfo = { ...location.state };
+
+  const story = useSelector((state: any) => state.story.value as number);
+
   const [name, setName] = useState<string>("");
   const [age, setAge] = useState<number>(1);
   const [gender, setGender] = useState<string>("남");
   const [personality, setPersonality] = useState<string>("");
-
-  interface Character {
-    story: number;
-    age: number;
-    gender: string;
-    name: string;
-    personality: string;
-  }
-  useEffect(() => {
-    const storedStory = localStorage.getItem("story");
-    if (storedStory) {
-      setStory(parseInt(storedStory));
-    }
-  }, []);
 
   const handleAddCharacter = () => {
     if (
@@ -36,28 +35,28 @@ const CharacterSettingPage: React.FC = () => {
       name.trim() !== "" &&
       personality.trim() !== ""
     ) {
-      setCharacters([...characters, { story, name, age, gender, personality }]);
+      dispatch(addCharacter({ name, age, gender, personality }));
     }
   };
 
   const handleRemoveCharacter = (index: number) => {
-    const updatedCharacters = [...characters];
-    updatedCharacters.splice(index, 1);
-    setCharacters(updatedCharacters);
+    dispatch(removeCharacter(index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("Selected Characters:", characters);
-    console.log("name:", name);
-    console.log("story", story);
-    console.log("age", age);
-    console.log("gender", gender);
-    console.log("personality", personality);
+    console.log("전송될 데이터:", {
+      story,
+      age,
+      name,
+      personality,
+      gender,
+    });
 
     try {
       const token = localStorage.getItem("id");
+      console.log("사용자 토큰:", token);
       if (!token) {
         console.error("토큰이 없습니다.");
         return;
@@ -68,28 +67,22 @@ const CharacterSettingPage: React.FC = () => {
           "Content-Type": "application/json",
         },
       };
-      console.log(state);
       const response = await axios.post(
         "http://localhost:8000/api/story/register/character/",
         {
           story,
           age,
+          gender,
           name,
           personality,
-          gender,
         },
         config
       );
+
       console.log("사용자 토큰:", token);
       if (response.status === 201) {
         console.log("API 요청이 성공했습니다.");
-        navigate("/summary", {
-          state: {
-            genre: `${settingInfo.genre}`,
-            period: `${settingInfo.period}`,
-            background: `${settingInfo.background}`,
-          },
-        });
+        navigate("/summary");
       } else {
         console.error("API 요청이 실패했습니다.");
       }
@@ -98,7 +91,7 @@ const CharacterSettingPage: React.FC = () => {
     }
   };
   const handleGoBack = () => {
-    navigate("/background");
+    navigate("/period");
   };
 
   const handleNextPage = () => {

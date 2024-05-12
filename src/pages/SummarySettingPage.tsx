@@ -1,32 +1,40 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
+import { setSummary } from "../features/summarySlice";
+import Loading from "../components/Loading";
 
 const SummarySettingPage: React.FC = () => {
-  const [story, setStory] = useState<number | 0>(0);
+  const story = useSelector((state: any) => state.story.value) as number;
+  const summary = useSelector((state: any) => state.summary.value) as string;
+  const genre = useSelector(
+    (state: any) => state.genre.selectedGenres
+  ) as string[];
+  const back_ground = useSelector(
+    (state: any) => state.background.selectedBackgrounds
+  ) as string[];
+  const time_period = useSelector(
+    (state: any) => state.period.selectedPeriods
+  ) as string[];
+  const [loading, setLoading] = useState(false);
 
-  const location = useLocation();
-  const settingInfo = { ...location.state };
-  const [summary, setSummary] = useState<string>("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedStory = localStorage.getItem("story");
-    if (storedStory) {
-      setStory(parseInt(storedStory));
-    }
-  }, []);
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log("genre:", `${settingInfo.genre}`);
-    console.log("time_period:", `${settingInfo.period}`);
-    console.log("back_ground:", `${settingInfo.background}`);
-    console.log("Summary:", summary);
-
+    console.log("Sending data:", {
+      story,
+      genre,
+      time_period,
+      back_ground,
+      summary,
+    });
+    setLoading(true);
+    //api 요청 부분
     try {
-      // API 요청
       const token = localStorage.getItem("id");
       if (!token) {
         console.error("토큰이 없습니다.");
@@ -38,25 +46,30 @@ const SummarySettingPage: React.FC = () => {
           "Content-Type": "application/json",
         },
       };
+
+      console.log("사용자 토큰:", token);
       const response = await axios.post(
         "http://localhost:8000/api/story/register/background/",
         {
-          story: story,
+          story,
           genre: "fantasy",
-          //   genre: `${settingInfo.genre}`,
-          time_period: `${settingInfo.period}`,
-          back_ground: `${settingInfo.background}`,
-          summary: summary,
+          // genre: genre.join(","), //배열이면 문자열로 변환
+          time_period: time_period.join(", "),
+          back_ground: back_ground.join(", "),
+          summary,
         },
         config
       );
       if (response.status === 201) {
         console.log("API 요청이 성공했습니다.");
+        navigate("/firstresult");
       } else {
         console.error("API 요청이 실패했습니다.");
+        setLoading(false);
       }
     } catch (error) {
       console.error("API 요청 중 오류가 발생했습니다:", error);
+      setLoading(false);
     }
   };
 
@@ -97,7 +110,7 @@ const SummarySettingPage: React.FC = () => {
               <div className="w-full space-y-4">
                 <textarea
                   value={summary}
-                  onChange={(e) => setSummary(e.target.value)}
+                  onChange={(e) => dispatch(setSummary(e.target.value))}
                   placeholder="원하는 줄거리를 간단히 입력하세요."
                   className="w-full py-4 px-6 border border-gray-300 rounded-2xl"
                   style={{ height: "200px" }}

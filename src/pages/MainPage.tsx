@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { setStory } from "../features/storySlice";
+import { useDispatch } from "react-redux";
 
 const MainPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-  const [story, setStory] = useState<number | null>(null);
+  const dispatch = useDispatch();
+
+  // const [story, setStory] = useState<number | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("id");
@@ -13,6 +17,7 @@ const MainPage: React.FC = () => {
       setIsLoggedIn(true);
     }
   }, []);
+
   useEffect(() => {
     const storedStory = localStorage.getItem("story");
     if (storedStory) {
@@ -41,7 +46,11 @@ const MainPage: React.FC = () => {
 
       const { story } = response.data;
       console.log("생성된 story:", story);
-      setStory(story);
+
+      console.log("setStory 액션을 디스패치 하기 전", story);
+      dispatch(setStory(story)); // redux 스토어의 story 상태 업데이트
+      console.log("setStory 액션을 디스패치 후: ", story);
+
       localStorage.setItem("story", story.toString()); // story 값을 로컬 스토리지에 저장
       navigate("/genre");
     } catch (error) {

@@ -1,60 +1,77 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { addBackground, removeBackground } from "../features/backgroundSlice";
 
 const BackgroundSettingPage: React.FC = () => {
   const location = useLocation();
-  const settingInfo = { ...location.state };
-  const [selectedBackgrounds, setSelectedBackgrounds] = useState<string[]>([]);
+  const settingInfo = location.state || { genre: [] };
   const [additionalBackground, setAdditionalBackground] = useState<string>("");
+  const selectedBackgrounds = useSelector(
+    (state: any) => state.background.selectedBackgrounds
+  );
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const backgrounds = [
+    "마법의 숲",
+    "숨겨진 마을",
+    "용의 동굴",
+    "해적선",
+    "신비한 섬",
+    "장대한 산맥",
+    "야생 사바나",
+    "북극의 빙판",
+    "동물원",
+    "옛날 마을",
+    "고대 숲 속의 오두막",
+    "전설의 호수",
+    "우주 정거장",
+    "과학 실험실",
+    "미래 도시",
+    "울창한 열대우림",
+    "거대한 폭포",
+    "산속의 계곡",
+    "고대 사원",
+    "농촌",
+    "전설의 시간",
+    "학교",
+    "가정집",
+    "도시 공원",
+  ];
 
   const handleBackgroundClick = (background: string) => {
-    setSelectedBackgrounds((prevBackgrounds) =>
-      prevBackgrounds.includes(background)
-        ? prevBackgrounds.filter((g) => g !== background)
-        : [...prevBackgrounds, background]
-    );
-  };
-
-  const handleAddBackground = () => {
-    if (additionalBackground.trim() !== "") {
-      const trimmedbackground = additionalBackground.trim();
-      if (!selectedBackgrounds.includes(trimmedbackground)) {
-        setSelectedBackgrounds((prevBackgrounds) => [
-          ...prevBackgrounds,
-          trimmedbackground,
-        ]);
-      }
-      // setAdditionalBackground(""); // 입력값 초기화
+    if (selectedBackgrounds.includes(background)) {
+      dispatch(removeBackground(background));
+    } else {
+      dispatch(addBackground(background));
     }
   };
-
-  const handleRemovebackground = (background: string) => {
-    setSelectedBackgrounds((prevBackgrounds) =>
-      prevBackgrounds.filter((g) => g !== background)
-    );
+  const handleAddBackground = () => {
+    if (additionalBackground.trim() !== "") {
+      dispatch(addBackground(additionalBackground.trim()));
+      setAdditionalBackground(""); // 입력값 초기화
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Selected genres:", `${settingInfo.genre}`);
-    console.log("Selected periods:", `${settingInfo.period}`);
-    console.log("Selected backgrounds:", selectedBackgrounds);
-    navigate("/character", {
-      state: {
-        genre: `${settingInfo.genre}`,
-        period: `${settingInfo.period}`,
-        background: selectedBackgrounds,
-      },
+    console.log("Selected backgrounds:", {
+      state: { background: selectedBackgrounds },
+    });
+    navigate("/period", {
+      state: { ...settingInfo, background: selectedBackgrounds },
     });
   };
 
   const handleGoBack = () => {
-    navigate("/period");
+    navigate("/genre");
   };
 
   const handleNextPage = () => {
-    navigate("/character");
+    navigate("/period", {
+      state: { background: selectedBackgrounds },
+    });
   };
 
   return (
@@ -62,7 +79,7 @@ const BackgroundSettingPage: React.FC = () => {
       <div className="w-3/4 mt-24 flex-1 justify-between items-center">
         <div className="bg-[#FFF0A3] p-4 mb-8 rounded-2xl shadow-lg">
           <div className="text-xl font-bold text-black font-['Inria'] p-4">
-            3. 원하는 이야기의 공간적 배경을 선택 혹은 입력하세요
+            2. 원하는 이야기의 공간적 배경을 선택 혹은 입력하세요
           </div>
           <div className="">
             <input
@@ -100,20 +117,28 @@ const BackgroundSettingPage: React.FC = () => {
                 </svg>
               </button>
             </div>
-            <div className="flex flex-col w-4/5 space-y-4 p-4 bg-white border border-gray-300 justify-center items-center rounded-2xl">
-              {["숲", "뭐", "뭐지", "머", "배경"].map((background, index) => (
-                <button
-                  key={index}
-                  className={`py-2 px-4 rounded-full w-40 h-10  shadow-lg ${
-                    selectedBackgrounds.includes(background)
-                      ? "bg-[#FFF0A3] text-black shadow-none"
-                      : "bg-[#EBEBEB] text-black"
-                  } hover:bg-[#FFF0A3] hover:shadow-none`}
-                  onClick={() => handleBackgroundClick(background)}
-                >
-                  {background}
-                </button>
-              ))}
+            <div
+              className="w-4/5 bg-white border border-gray-300 justify-center items-center rounded-2xl"
+              style={{ height: "300px" }}
+            >
+              <div
+                className="flex flex-wrap justify-center gap-6 overflow-y-auto p-8"
+                style={{ maxHeight: "100%" }}
+              >
+                {backgrounds.map((background, index) => (
+                  <button
+                    key={index}
+                    className={`py-2 px-4 rounded-full w-40 h-10  shadow-lg ${
+                      selectedBackgrounds.includes(background)
+                        ? "bg-[#FFF0A3] text-black shadow-none"
+                        : "bg-[#EBEBEB] text-black"
+                    } hover:bg-[#FFF0A3] hover:shadow-none`}
+                    onClick={() => handleBackgroundClick(background)}
+                  >
+                    {background}
+                  </button>
+                ))}
+              </div>
             </div>
             <div className="p-4 rounded-2xl w-1/5 flex justify-center items-center">
               <button
@@ -143,11 +168,11 @@ const BackgroundSettingPage: React.FC = () => {
       <div className="w-3/4 flex p-4 bg-[#FFF0A3] rounded-2xl justify-center shadow-lg">
         <div className=" w-3/4 bg-white border border-gray-300 text-m text-black font-['Inria'] p-6 rounded-2xl">
           선택한 배경 :{" "}
-          {selectedBackgrounds.map((background, index) => (
+          {selectedBackgrounds.map((background: string, index: number) => (
             <button
               key={index}
               className="px-6 py-1 bg-[#FFF0A3] text-black rounded-2xl m-2"
-              onClick={() => handleRemovebackground(background)}
+              onClick={() => dispatch(removeBackground(background))}
             >
               <div className="flex">
                 <span className="ml-2">{background}</span>

@@ -1,42 +1,46 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  addGenre,
+  removeGenre, // setSelectedGenres 제거
+} from "../features/genreSlice"; // 상대 경로 확인 필요
 
 const GenreSettingPage: React.FC = () => {
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [additionalGenre, setAdditionalGenre] = useState<string>("");
-
+  const selectedGenres = useSelector(
+    (state: any) => state.genre.selectedGenres
+  );
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleGenreClick = (genre: string) => {
-    setSelectedGenres((prevGenres) =>
-      prevGenres.includes(genre)
-        ? prevGenres.filter((g) => g !== genre)
-        : [...prevGenres, genre]
-    );
+    if (selectedGenres.includes(genre)) {
+      dispatch(removeGenre(genre));
+    } else {
+      dispatch(addGenre(genre));
+    }
   };
 
   const handleAddGenre = () => {
     if (additionalGenre.trim() !== "") {
-      const trimmedGenre = additionalGenre.trim();
-      if (!selectedGenres.includes(trimmedGenre)) {
-        setSelectedGenres((prevGenres) => [...prevGenres, trimmedGenre]);
-      }
-      // setAdditionalGenre(""); // 입력값 초기화
+      dispatch(addGenre(additionalGenre.trim()));
+      setAdditionalGenre(""); // 입력값 초기화
     }
-  };
-
-  const handleRemoveGenre = (genre: string) => {
-    setSelectedGenres((prevGenres) => prevGenres.filter((g) => g !== genre));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log("Selected genres:", selectedGenres);
-    navigate("/period", { state: { genre: selectedGenres } });
+    navigate("/background", { state: { genre: selectedGenres } });
   };
 
   const handleNextPage = () => {
-    navigate("/period");
+    navigate("/background", {
+      state: {
+        genre: selectedGenres,
+      },
+    });
   };
 
   return (
@@ -62,9 +66,24 @@ const GenreSettingPage: React.FC = () => {
           </div>
           <div className="flex justify-center items-center m-4">
             <div className="bg-[#FFF0A3] p-4 rounded-2xl w-1/5 flex justify-center items-center"></div>
-            <div className="flex flex-col w-4/5 space-y-4 p-4 bg-white border border-gray-300 justify-center items-center rounded-2xl">
-              {["환상", "모험", "동화", "신화", "공상과학"].map(
-                (genre, index) => (
+            <div
+              className="flex flex-col w-4/5 space-y-4 p-4 bg-white border border-gray-300 justify-center items-center rounded-2xl"
+              style={{ height: "300px", overflowY: "scroll" }}
+            >
+              <div
+                className="flex flex-wrap justify-center gap-6"
+                style={{ maxWidth: "100%" }}
+              >
+                {[
+                  "환상", //마법의 숲, 숨겨진 마을, 용의 동굴
+                  "모험", //해적선, 신비한 섬, 장대한 산맥
+                  "동물", //야생 사바나, 북극의 빙판, 동물원
+                  "전래동화", //옛날 마을, 고대 숲 속의 오두막, 전설의 호수
+                  "과학", //우주 정거장, 과학 실험실, 미래 도시
+                  "자연", //울창한 열대우림, 거대한 폭포, 산속의 계곡
+                  "교훈", //고대 사원, 농촌, 전설의 시간
+                  "일상", //학교, 가정집, 도시 공원
+                ].map((genre, index) => (
                   <button
                     key={index}
                     className={`py-2 px-4 rounded-full w-40 h-10  shadow-lg ${
@@ -76,8 +95,8 @@ const GenreSettingPage: React.FC = () => {
                   >
                     {genre}
                   </button>
-                )
-              )}
+                ))}
+              </div>
             </div>
             <div className="p-4 rounded-2xl w-1/5 flex justify-center items-center">
               <button
@@ -107,11 +126,11 @@ const GenreSettingPage: React.FC = () => {
       <div className="w-3/4 flex p-4 bg-[#FFF0A3] rounded-2xl justify-center shadow-lg">
         <div className=" w-3/4 bg-white border border-gray-300 text-m text-black font-['Inria'] p-6 rounded-2xl">
           선택한 장르 :{" "}
-          {selectedGenres.map((genre, index) => (
+          {selectedGenres.map((genre: string, index: number) => (
             <button
               key={index}
               className="px-6 py-1 bg-[#FFF0A3] text-black rounded-2xl m-2"
-              onClick={() => handleRemoveGenre(genre)}
+              onClick={() => dispatch(removeGenre(genre))}
             >
               <div className="flex">
                 <span className="ml-2">{genre}</span>
