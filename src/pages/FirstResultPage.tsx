@@ -53,73 +53,91 @@ const FirstResultPage: React.FC = () => {
           line.startsWith("B.") ||
           line.startsWith("C.")
       )
-      .map((line) => line.trim());
+      .map((line) => line.substring(line.indexOf(" ") + 1).trim()); // 접두사 제외 문장만
 
-    return { title, content, choices };
+    return { title: title || "", content, choices };
   };
-
-  const fetchData = useCallback(async () => {
-    const config = fetchConfig();
-    if (!config) return;
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/api/story/register/chatgpt/",
-        { story_id: story },
-        config
-      );
-
-      if (response.status === 200) {
-        const parsedData = parseResponse(response.data.answer);
-        console.log("추가된 데이터들 : ", parsedData);
-        console.log("api 요청 성공!");
-        dispatch(addPage({ pageId: Date.now(), ...parsedData }));
-        console.log("페이지 저장 성공!");
-      } else {
-        console.error("API 요청 실패 :", response);
-      }
-    } catch (error) {
-      console.error("API 요청 중 오류 발생 :", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [dispatch, story]);
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const handleChoice = async (choice: string) => {
-    dispatch(
-      addUserChoice({ pageId: currentPage?.pageId || 0, userChoice: choice })
-    );
-    const config = fetchConfig();
-    if (!config) return;
-
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/api/story/register/chatgpt/",
-        { story_id: story, user_choice: choice },
-        config
-      );
-
-      if (response.status === 200 && response.data.answer) {
-        const parsedData = parseResponse(response.data.answer);
-        // dispatch(addPage({ pageId: Date.now(), ...parsedData }));
-        dispatch(
-          updatePage({ pageId: currentPage?.pageId || 0, ...parsedData })
+    const fetchData = async () => {
+      const config = fetchConfig();
+      if (!config) return;
+      setLoading(true);
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/story/register/chatgpt/",
+          { story_id: story },
+          config
         );
-        console.log("API 요청이 성공했습니다.");
-      } else {
-        console.error("API 요청이 실패했습니다.", response);
+
+        if (response.status === 200) {
+          const parsedData = parseResponse(response.data.answer);
+          console.log("추가된 데이터들 : ", parsedData);
+          console.log("api 요청 성공!");
+          dispatch(addPage({ pageId: Date.now(), ...parsedData }));
+          console.log("페이지 저장 성공!");
+        } else {
+          console.error("API 요청 실패 :", response);
+        }
+      } catch (error) {
+        console.error("API 요청 중 오류 발생 :", error);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("API 요청 중 오류가 발생했습니다:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    };
+
+    fetchData();
+  }, [dispatch, story]); // `fetchData` 함수를 직접 `useEffect` 내부에 정의
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, [fetchData]);
+
+  const handleChoice = useCallback(
+    async (choice: string) => {
+      dispatch(
+        addUserChoice({ pageId: currentPage?.pageId || 0, userChoice: choice })
+      );
+      const config = fetchConfig();
+      if (!config) return;
+
+      setLoading(true);
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/story/register/chatgpt/",
+          { story_id: story, user_choice: choice },
+          config
+        );
+
+        if (response.status === 200 && response.data.answer) {
+          const parsedData = parseResponse(response.data.answer);
+          dispatch(
+            updatePage({ pageId: currentPage?.pageId || 0, ...parsedData })
+          );
+          console.log("첫 번째 API 요청이 성공했습니다.");
+
+          const saveResponse = await axios.post(
+            "http://localhost:8000/api/story/save_story/",
+            { story_id: story, content: choice }, //content?
+            config
+          );
+
+          if (saveResponse.status === 200) {
+            console.log("스토리 저장 성공");
+          } else {
+            console.error("스토리 저장 실패 :", saveResponse);
+          }
+        } else {
+          console.error("첫 번째 API 요청 실패 :", response);
+        }
+      } catch (error) {
+        console.error("API 요청 중 오류가 발생했습니다:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [dispatch, story, currentPage, fetchConfig]
+  );
 
   useEffect(() => {
     console.log("Current page updated:", currentPage);
