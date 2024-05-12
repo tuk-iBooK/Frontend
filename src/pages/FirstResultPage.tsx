@@ -1,21 +1,22 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addUserChoice, updateStory, StoryState } from "../features/appSlice";
+import { addPage, addUserChoice, updatePage } from "../features/storySlice";
+// import { RootState } from "../features/storySlice";
 import axios from "axios";
-import Spinner from "../components/Loading";
+import Loading from "../components/Loading";
 
 const FirstResultPage: React.FC = () => {
   const dispatch = useDispatch();
-
   const story = useSelector((state: any) => state.story.value as number);
-  const userChoices = useSelector((state: StoryState) => state.userChoices);
+  const pages = useSelector((state: any) => state.story.pages || []);
+  const currentPage = useSelector((state: any) => {
+    return state.story.pages && state.story.pages.length > 0
+      ? state.story.pages[state.story.pages.length - 1]
+      : null;
+  }); //story 객체 내부에 pages로 접근하도록!
 
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [choices, setChoices] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // API 호출 설정을 추출 및 중복을 제거하기 위한 함수
   const fetchConfig = () => {
     const token = localStorage.getItem("id");
     console.log("현재 토큰 :", token);
@@ -31,6 +32,32 @@ const FirstResultPage: React.FC = () => {
     };
   };
 
+  //서버 데이터 파싱하는 함수
+  const parseResponse = (responseText: string) => {
+    const titleMatch = responseText.match(/제목: (.*)\n/);
+    const title = titleMatch ? titleMatch[1] : undefined;
+    const contentStart = titleMatch
+      ? responseText.indexOf("\n", titleMatch.index) + 1
+      : 0;
+    const choiceStart = responseText.lastIndexOf("\nA. ");
+    const content = responseText.substring(
+      contentStart,
+      choiceStart > -1 ? choiceStart : undefined
+    );
+    const choices = responseText
+      .substring(choiceStart)
+      .split("\n")
+      .filter(
+        (line) =>
+          line.startsWith("A.") ||
+          line.startsWith("B.") ||
+          line.startsWith("C.")
+      )
+      .map((line) => line.trim());
+
+    return { title, content, choices };
+  };
+
   const fetchData = useCallback(async () => {
     const config = fetchConfig();
     if (!config) return;
@@ -43,44 +70,29 @@ const FirstResultPage: React.FC = () => {
       );
 
       if (response.status === 200) {
-        const { answer } = response.data;
-        // const answer = response.data.answer;
-        const titleMatch = answer.match(/제목: (.*)\n/);
-        if (titleMatch) setTitle(titleMatch[1]);
-
-        const contentStart =
-          answer.indexOf("제목: ") + (titleMatch ? titleMatch[0].length : 0);
-        const choiceStart = answer.lastIndexOf("\nA. ");
-        if (choiceStart > -1) {
-          setContent(answer.substring(contentStart, choiceStart));
-          const choiceText = answer.substring(choiceStart);
-          const choicesArray = choiceText
-            .split("\n")
-            .filter(
-              (line: string) =>
-                line.startsWith("A.") ||
-                line.startsWith("B.") ||
-                line.startsWith("C.")
-            );
-          setChoices(choicesArray);
-        } else {
-          setContent(answer.substring(contentStart));
-        }
+        const parsedData = parseResponse(response.data.answer);
+        console.log("추가된 데이터들 : ", parsedData);
+        console.log("api 요청 성공!");
+        dispatch(addPage({ pageId: Date.now(), ...parsedData }));
+        console.log("페이지 저장 성공!");
       } else {
-        console.error("API 요청이 실패했습니다.");
-        setLoading(true);
+        console.error("API 요청 실패 :", response);
       }
     } catch (error) {
-      console.error("API 요청 중 오류가 발생했습니다:", error);
-      setLoading(true);
+      console.error("API 요청 중 오류 발생 :", error);
+    } finally {
+      setLoading(false);
     }
-  }, [story]);
+  }, [dispatch, story]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   const handleChoice = async (choice: string) => {
+    dispatch(
+      addUserChoice({ pageId: currentPage?.pageId || 0, userChoice: choice })
+    );
     const config = fetchConfig();
     if (!config) return;
 
@@ -93,53 +105,57 @@ const FirstResultPage: React.FC = () => {
       );
 
       if (response.status === 200 && response.data.answer) {
-        const { content, choices, id } = response.data.answer;
-
+        const parsedData = parseResponse(response.data.answer);
+        // dispatch(addPage({ pageId: Date.now(), ...parsedData }));
         dispatch(
-          updateStory({
-            title, // This will be undefined if not provided in the response
-            content,
-            choices,
-          })
+          updatePage({ pageId: currentPage?.pageId || 0, ...parsedData })
         );
         console.log("API 요청이 성공했습니다.");
-        setLoading(false);
       } else {
-        console.error("API 요청이 실패했습니다.", response); //response값을 따로 저장해서 나중에 보내야함 ++ 수정 : 그림생성api를 따로 생성 저장
-        setLoading(false);
+        console.error("API 요청이 실패했습니다.", response);
       }
     } catch (error) {
       console.error("API 요청 중 오류가 발생했습니다:", error);
+    } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log("Current page updated:", currentPage);
+  }, [currentPage]);
+  useEffect(() => {
+    console.log("Pages array:", pages);
+  }, [pages]);
 
   return (
     <div className="flex flex-col max-w-7xl bg-[#E7E3E0] opacity-75 h-screen mx-auto my-8 p-4 shadow-2xl">
       <div className="flex flex-grow">
         <div className="flex-1 p-2 border-r border-gray-300 bg-[#FDF9F6] overflow-y-auto shadow-4xl">
           <div className="prose">
-            <h1>{title || ""}</h1>
-            <p>{content}</p>
+            <h1>{currentPage?.title || ""}</h1>
+            <p>{currentPage?.content || ""}</p>
+            {currentPage?.choices && currentPage.choices.length > 0 ? (
+              currentPage.choices.map((choice: string, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => handleChoice(choice)}
+                  className="w-3/4 py-2 mb-4 rounded-2xl text-black text-ml bg-[#FFF0A3] hover:bg-[#FFF8D6] text-center shadow-lg hover:shadow-none"
+                >
+                  {choice}
+                </button>
+              ))
+            ) : (
+              <p>페이지 생성 중...</p>
+            )}
           </div>
-          {choices.map((choice, index) => (
-            <button
-              key={index}
-              onClick={() => handleChoice(choice)}
-              className="w-3/4 py-2 mb-4 rounded-2xl text-black text-ml bg-[#FFF0A3] hover:bg-[#FFF8D6] text-center shadow-lg hover:shadow-none"
-            >
-              {choice}
-            </button>
-          ))}
         </div>
         <div className="flex-1 p-4 bg-[#FDF9F6] overflow-y-auto">
-          {/* 이미지 */}
           <p>이미지</p>
         </div>
       </div>
       <div className="w-full bg-[#FDF9F6] border-t border-gray-300 p-3">
-        {/* 페이지 번호 */}
-        <p>1</p>
+        <p>{pages.length}</p>
       </div>
     </div>
   );
