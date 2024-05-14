@@ -1,19 +1,26 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addPage, addUserChoice, updatePage } from "../features/storySlice";
-// import { RootState } from "../features/storySlice";
-import axios from "axios";
+import {
+  addPage,
+  addUserChoice,
+  updatePage,
+  setImage,
+} from "../features/storySlice";
+
+import axios, { AxiosRequestConfig } from "axios";
 import Loading from "../components/Loading";
 
 const FirstResultPage: React.FC = () => {
   const dispatch = useDispatch();
   const story = useSelector((state: any) => state.story.value as number);
   const pages = useSelector((state: any) => state.story.pages || []);
+
   const currentPage = useSelector((state: any) => {
-    return state.story.pages && state.story.pages.length > 0
+    return state.story.pages.length > 0
       ? state.story.pages[state.story.pages.length - 1]
-      : null;
-  }); //story 객체 내부에 pages로 접근하도록!
+      : undefined; // null 대신 undefined 사용, 초기값 조정 필요시 조정
+  }); //pages 배열이 비어 있으면 undefined를 반환
+  const pageId = currentPage?.pageId ?? 0; //약 currentPage가 null이거나 undefined일 경우, pageId는 0으로 설정
 
   const [loading, setLoading] = useState(false);
 
@@ -59,39 +66,164 @@ const FirstResultPage: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const config = fetchConfig();
-      if (!config) return;
-      setLoading(true);
-      try {
-        const response = await axios.post(
-          "http://localhost:8000/api/story/register/chatgpt/",
-          { story_id: story },
+    const config = fetchConfig();
+    if (config) {
+      fetchData(story, config);
+    }
+  }, [story]);
+
+  useEffect(() => {
+    console.log("Pages updated:", pages);
+  }, [pages]);
+
+  // const fetchData = async (story: number, config: AxiosRequestConfig) => {
+  //   setLoading(true);
+  //   // API 요청 : 이야기 생성
+  //   try {
+  //     const response = await axios.post(
+  //       "http://localhost:8000/api/story/register/chatgpt/",
+  //       { story_id: story },
+  //       config
+  //     );
+
+  //     if (response.status === 200) {
+  //       const parsedData = parseResponse(response.data.answer);
+  //       console.log("추가된 데이터들 : ", parsedData);
+  //       console.log("이야기 생성 api 요청 성공!");
+  //       dispatch(addPage({ ...parsedData })); // 생성된 pageId 사용
+
+  //       // API 요청 : 이야기 저장
+  //       const saveStoryResponse = await axios.post(
+  //         "http://localhost:8000/api/story/save_story/",
+  //         { story_id: story, content: parsedData.content },
+  //         config
+  //       );
+  //       console.log("이야기 저장 성공! :", saveStoryResponse);
+
+  //       // 이미지 생성 API 요청
+  //       const imageResponse = await axios.post(
+  //         "http://localhost:8000/api/story/register/chatgpt/image/",
+  //         { story_id: story, query: parsedData.content },
+  //         config
+  //       );
+  //       console.log("이미지 생성 성공 :", imageResponse);
+
+  //       if (imageResponse.status === 200 && imageResponse.data.image_url) {
+  //         dispatch(
+  //           setImage({
+  //             pageId: currentPage?.pageId || 0,
+  //             imageUrl: imageResponse.data.image_url,
+  //           })
+  //         );
+  //         console.log("Pages updated:", pages);
+  //         console.log("currentPage?.pageId : ", currentPage?.pageId);
+  //         console.log("pageId : ", pageId);
+
+  //         // if (currentPage && currentPage.pageId) {
+  //         console.log("Saving image with pageId:", currentPage?.pageId);
+
+  //         // 이미지 url 저장 요청
+  //         await axios.post(
+  //           "http://localhost:8000/api/story/save_image/",
+  //           {
+  //             story_id: story,
+  //             page_number: currentPage?.pageId,
+  //             image_url: imageResponse.data.image_url,
+  //           },
+  //           config
+  //         );
+  //         console.log("이미지 저장 성공:", imageResponse.data.image_url);
+  //       } else {
+  //         console.error("이미지 저장 실패:", imageResponse);
+  //       }
+  //     } else {
+  //       console.error("API 요청 실패 :", response);
+  //     }
+  //   } catch (error) {
+  //     console.error("API 요청 중 오류 발생 :", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const fetchData = async (story: number, config: AxiosRequestConfig) => {
+    setLoading(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/story/register/chatgpt/",
+        { story_id: story },
+        config
+      );
+      if (response.status === 200) {
+        const parsedData = parseResponse(response.data.answer);
+        dispatch(addPage({ ...parsedData }));
+        console.log("Redux에 페이지 추가됨");
+
+        // API 요청 : 이야기 저장
+        const saveStoryResponse = await axios.post(
+          "http://localhost:8000/api/story/save_story/",
+          { story_id: story, content: parsedData.content },
           config
         );
-
-        if (response.status === 200) {
-          const parsedData = parseResponse(response.data.answer);
-          console.log("추가된 데이터들 : ", parsedData);
-          console.log("api 요청 성공!");
-          dispatch(addPage({ pageId: Date.now(), ...parsedData }));
-          console.log("페이지 저장 성공!");
-        } else {
-          console.error("API 요청 실패 :", response);
-        }
-      } catch (error) {
-        console.error("API 요청 중 오류 발생 :", error);
-      } finally {
-        setLoading(false);
+        console.log("이야기 저장 성공! :", saveStoryResponse);
+      } else {
+        console.error("API 요청 실패 :", response);
       }
-    };
+    } catch (error) {
+      console.error("API 요청 중 오류 발생 :", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchData();
-  }, [dispatch, story]); // `fetchData` 함수를 직접 `useEffect` 내부에 정의
+  useEffect(() => {
+    console.log("currentPage 변경됨, 이미지 생성 검토:", currentPage);
+    if (currentPage && !currentPage.imageUrl) {
+      createAndSaveImage(currentPage.pageId);
+    }
+  }, [currentPage]);
+
+  const createAndSaveImage = async (pageId: number) => {
+    const config = fetchConfig();
+    if (!config) return;
+
+    // 이미지 생성 요청
+    try {
+      const imageResponse = await axios.post(
+        "http://localhost:8000/api/story/register/chatgpt/image/",
+        { story_id: story, query: pages[pages.length - 1].content },
+        config
+      );
+      console.log("이야기 생성 성공 :", imageResponse);
+
+      // 이미지 저장 요청
+      if (imageResponse.status === 200 && imageResponse.data.image_url) {
+        dispatch(setImage({ pageId, imageUrl: imageResponse.data.image_url }));
+        console.log("Redux 상태에 이미지 URL 설정");
+
+        const saveImageResponse = await axios.post(
+          "http://localhost:8000/api/story/save_image/",
+          {
+            story_id: story,
+            page_number: pageId,
+            image_url: imageResponse.data.image_url,
+          },
+          config
+        );
+        console.log("이미지 저장 성공!", saveImageResponse);
+      } else {
+        console.error("이미지 생성 실패:", imageResponse);
+      }
+    } catch (error) {
+      console.error("이미지 저장 중 오류 발생:", error);
+    }
+  };
 
   // useEffect(() => {
-  //   fetchData();
-  // }, [fetchData]);
+  //   if (currentPage && currentPage.imageUrl) {
+  //     console.log("New Image URL:", currentPage.imageUrl);
+  //   }
+  // }, [currentPage]);
 
   const handleChoice = useCallback(
     async (choice: string) => {
@@ -103,38 +235,60 @@ const FirstResultPage: React.FC = () => {
 
       setLoading(true);
       try {
-        // 첫 번째 API 요청: 이야기 저장
-        const saveResponse = await axios.post(
-          "http://localhost:8000/api/story/save_story/",
-          { story_id: story, content: choice },
+        // 두 번째 API 요청: 이야기 생성
+        const updateResponse = await axios.post(
+          "http://localhost:8000/api/story/register/chatgpt/",
+          { story_id: story, user_choice: choice },
           config
         );
+        console.log("두 번째 API 요청 성공 :", updateResponse);
 
-        console.log("첫 번째 API 요청 응답 :", saveResponse);
+        if (updateResponse.status === 200 && updateResponse.data.answer) {
+          const parsedData = parseResponse(updateResponse.data.answer);
+          dispatch(
+            updatePage({ pageId: currentPage?.pageId || 0, ...parsedData })
+          );
 
-        if (saveResponse.status === 200) {
-          console.log("이야기 저장 성공");
+          // 두번째 API 요청 : 이야기 저장
+          const saveStoryResponse = await axios.post(
+            "http://localhost:8000/api/story/save_story/",
+            { story_id: story, content: parsedData.content },
+            config
+          );
+          console.log("저장된 이야기 내용 :", saveStoryResponse);
 
-          // 두 번째 API 요청: 이야기 생성
-          const updateResponse = await axios.post(
-            "http://localhost:8000/api/story/register/chatgpt/",
-            { story_id: story, user_choice: choice },
+          // 이미지 생성 요청
+          const imageResponse = await axios.post(
+            "http://localhost:8000/api/story/register/chatgpt/image/",
+            { story_id: story, query: parsedData.content },
             config
           );
 
-          console.log("두 번째 API 요청 응답 :", updateResponse);
-
-          if (updateResponse.status === 200 && updateResponse.data.answer) {
-            const parsedData = parseResponse(updateResponse.data.answer);
+          if (imageResponse.status === 200 && imageResponse.data.image_url) {
             dispatch(
-              updatePage({ pageId: currentPage?.pageId || 0, ...parsedData })
+              setImage({
+                pageId: currentPage?.pageId,
+                imageUrl: imageResponse.data.image_url,
+              })
             );
-            console.log("이야기 생성 요청이 성공했습니다.");
+            console.log("이미지 생성 성공:", imageResponse.data.image_url);
+
+            // 이미지 저장 요청
+            await axios.post(
+              "http://localhost:8000/api/story/save_image/",
+              {
+                story_id: story,
+                page_number: currentPage?.pageId,
+                image_url: imageResponse.data.image_url,
+              },
+              config
+            );
+            console.log("이미지 저장 성공");
           } else {
-            console.error("이야기 생성 요청 실패 :", updateResponse);
+            console.error("이미지 생성 요청 실패:", imageResponse);
           }
         } else {
-          console.error("이야기 저장 실패 :", saveResponse);
+          console.error("이야기 저장 요청 실패 :", updateResponse);
         }
       } catch (error) {
         console.error("API 요청 중 오류가 발생했습니다:", error);
@@ -142,15 +296,8 @@ const FirstResultPage: React.FC = () => {
         setLoading(false);
       }
     },
-    [dispatch, story, currentPage, fetchConfig]
+    [pages, dispatch, story, currentPage, fetchConfig, pages.length]
   );
-
-  useEffect(() => {
-    console.log("Current page updated:", currentPage);
-  }, [currentPage]);
-  useEffect(() => {
-    console.log("Pages array:", pages);
-  }, [pages]);
 
   return (
     <div className="flex flex-col max-w-7xl bg-[#E7E3E0] opacity-75 h-screen mx-auto my-8 p-4 shadow-2xl">
@@ -175,11 +322,15 @@ const FirstResultPage: React.FC = () => {
           </div>
         </div>
         <div className="flex-1 p-4 bg-[#FDF9F6] overflow-y-auto">
-          <p>이미지</p>
+          {currentPage?.imageUrl ? (
+            <img src={currentPage.imageUrl} alt="Story Illustration" />
+          ) : (
+            <p>이미지 로딩 중...</p>
+          )}
         </div>
       </div>
       <div className="w-full bg-[#FDF9F6] border-t border-gray-300 p-3">
-        <p>{pages.length}</p>
+        <p>{pages.length + 1}</p>
       </div>
     </div>
   );
