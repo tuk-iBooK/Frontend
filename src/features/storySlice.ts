@@ -4,7 +4,7 @@ interface Page {
   pageId: number;
   title?: string;
   content: string;
-  choices: string[];
+  choices?: string[];
   imageUrl?: string;
 }
 

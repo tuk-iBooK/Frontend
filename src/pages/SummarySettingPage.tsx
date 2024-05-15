@@ -24,6 +24,9 @@ const SummarySettingPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return; // 로딩 중이면 함수 실행을 차단
+
+    setLoading(true);
 
     console.log("Sending data:", {
       story,
@@ -32,7 +35,7 @@ const SummarySettingPage: React.FC = () => {
       back_ground,
       summary,
     });
-    setLoading(true);
+
     //api 요청 부분
     try {
       const token = localStorage.getItem("id");
@@ -47,7 +50,6 @@ const SummarySettingPage: React.FC = () => {
         },
       };
 
-      console.log("사용자 토큰:", token);
       const response = await axios.post(
         "http://localhost:8000/api/story/register/background/",
         {
@@ -60,6 +62,7 @@ const SummarySettingPage: React.FC = () => {
         },
         config
       );
+
       if (response.status === 201) {
         console.log("API 요청이 성공했습니다.");
         navigate("/firstresult");
