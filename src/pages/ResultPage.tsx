@@ -24,32 +24,75 @@ const ResultPage: React.FC = () => {
   };
 
   return (
-    <div className="result-page">
-      <h1>완성된 이야기</h1>
+    <div className="result-page flex flex-col items-center justify-center min-h-screen bg-[#FDF9F6]">
       {pages.length > 0 ? (
         <>
-          <div className="page">
-            <h2>{pages[currentPageIndex].pageId}</h2>
-            <p>
-              <strong>{pages[currentPageIndex].title}</strong>
-            </p>
-            <p>
-              <strong>{pages[currentPageIndex].content}</strong>
-            </p>
-            {pages[currentPageIndex].imageUrl && (
-              <img
-                src={pages[currentPageIndex].imageUrl}
-                alt="Page illustration"
-              />
-            )}
+          <div className="flex items-center justify-center  mt-8 mb-4">
+            <h2 className="text-2xl font-bold text-black">
+              {pages[currentPageIndex].title}
+            </h2>
           </div>
-          <div>
-            {currentPageIndex > 0 && (
-              <button onClick={prevPage}>이전 페이지</button>
-            )}
-            {currentPageIndex < pages.length - 1 && (
-              <button onClick={nextPage}>다음 페이지</button>
-            )}
+          <div className="flex items-center justify-center w-full px-8">
+            <div className="flex w-5/6 rounded-lg">
+              <div className="w-1/6 flex items-center justify-center">
+                {currentPageIndex > 0 && (
+                  <button
+                    className="w-12 h-12  bg-white text-gray-500 rounded-full flex justify-center items-center shadow-lg hover:shadow-none hover:bg-[#EBEBEB] hover:text-white"
+                    onClick={prevPage}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
+              <div className="w-full flex-grow flex justify-center items-center">
+                <img
+                  src={pages[currentPageIndex].imageUrl}
+                  alt="Page illustration"
+                  className="w-2/3 h-full object-cover rounded-t-lg bg-white"
+                />
+              </div>
+              <div className="w-1/6 flex items-center justify-center">
+                {currentPageIndex < pages.length - 1 && (
+                  <button
+                    className="w-12 h-12 bg-white text-gray-500 rounded-full flex justify-center items-center shadow-lg hover:shadow-none hover:bg-[#EBEBEB] hover:text-white"
+                    onClick={nextPage}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="text-center text-black w-5/6 text-lg mt-0">
+            <div className="bg-white shadow-lg rounded-lg p-12 w-full">
+              <p>{pages[currentPageIndex].content}</p>
+            </div>
           </div>
         </>
       ) : (
@@ -60,51 +103,6 @@ const ResultPage: React.FC = () => {
 };
 
 export default ResultPage;
-
-// 이건 잘댐
-
-// import React from "react";
-// import { useSelector } from "react-redux";
-
-// interface Page {
-//   pageId: number;
-//   title?: string;
-//   content: string;
-//   choices?: string[];
-//   imageUrl?: string;
-// }
-
-// const ResultPage: React.FC = () => {
-//   const pages = useSelector((state: any) =>
-//     state.story.pages.filter((page: Page) => [2, 3, 4, 5].includes(page.pageId))
-//   );
-
-//   return (
-//     <div className="result-page">
-//       <h1>완성된 이야기</h1>
-//       {pages.length > 0 ? (
-//         pages.map((page: Page, index: number) => (
-//           <div key={index} className="page">
-//             <h2>{page.pageId}</h2>
-//             <p>
-//               <strong>{page.title}</strong>
-//             </p>
-//             <p>
-//               <strong> {page.content}</strong>
-//             </p>
-//             {page.imageUrl && (
-//               <img src={page.imageUrl} alt="Page illustration" />
-//             )}
-//           </div>
-//         ))
-//       ) : (
-//         <p>No pages found for the specified IDs.</p>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default ResultPage;
 
 // api 조회 요청
 // import React, { useEffect, useState } from "react";
