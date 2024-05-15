@@ -80,7 +80,7 @@ const MainPage: React.FC = () => {
   return (
     <div className="flex flex-col h-screen overflow-y-auto">
       {/* Top-level full-width container for login/signup */}
-      <div className="w-full p-4 pr-12 flex justify-end items-center">
+      {/* <div className="w-full p-4 pr-12 flex justify-end items-center bg-black">
         <Link
           to="/Login"
           className="text-gray-500 hover:underline hover:text-black mr-4"
@@ -105,7 +105,7 @@ const MainPage: React.FC = () => {
             <></>
           )}{" "}
         </div>
-      </div>
+      </div> */}
 
       {/* 헤더바 */}
       <div className="w-full p-4"> {/* Header will go here */}</div>
@@ -164,7 +164,7 @@ const MainPage: React.FC = () => {
           {/* 시작하기 버튼 */}
           <button
             type="button"
-            className="z-10 px-16 py-3 rounded-2xl text-black text-2xl bg-white hover:bg-[#FFF8D6] shadow-lg hover:shadow-none"
+            className="z-10 px-16 py-3 rounded-2xl text-black text-2xl bg-white hover:bg-[#FFFAE1] shadow-lg hover:shadow-none"
             onClick={handleStart}
             style={{
               position: "absolute",

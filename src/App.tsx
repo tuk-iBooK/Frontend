@@ -5,6 +5,7 @@ import { Provider } from "react-redux";
 import store from "./redux/store"; // Redux store를 import 합니다.
 import Login from "./pages/Login";
 import MainPage from "./pages/MainPage";
+import Header from "./components/Header";
 import SignUp from "./pages/SignUp";
 import GenreSettingPage from "./pages/GenreSettingPage";
 import PeriodSettingPage from "./pages/PeriodSettingPage";
@@ -18,6 +19,7 @@ function App() {
   return (
     <Provider store={store}>
       <BrowserRouter>
+        <Header />
         <div className="App">
           <Routes>
             <Route path="" element={<MainPage />} />
