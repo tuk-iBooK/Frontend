@@ -3,6 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { setStory } from "../features/storySlice";
 import { useDispatch } from "react-redux";
+//더미데이터
+import image1 from "../assets/public/01.png";
+import image2 from "../assets/public/02.png";
+import image3 from "../assets/public/03.png";
+import image4 from "../assets/public/04.png";
+import image5 from "../assets/public/05.png";
+import image6 from "../assets/public/06.png";
+import image7 from "../assets/public/07.png";
+import image8 from "../assets/public/08.png";
+import image9 from "../assets/public/09.png";
 
 const MainPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -63,6 +73,10 @@ const MainPage: React.FC = () => {
     setIsLoggedIn(false);
   };
 
+  function handleClick() {
+    navigate("/result");
+  }
+
   return (
     <div className="flex flex-col h-screen overflow-y-auto">
       {/* Top-level full-width container for login/signup */}
@@ -100,7 +114,7 @@ const MainPage: React.FC = () => {
         className="flex bg-[#FFF0A3] items-center justify-center"
         style={{ height: "400px", minHeight: "400px" }}
       >
-        <div className="flex-1 flex flex-col ml-36 justify-start items-start p-4">
+        <div className="flex-1 flex flex-col ml-36 justify-start items-start p-4 ">
           <p className="text-5xl mt-4 mb-4 font-bold text-black">
             나만의 그림 동화책
           </p>
@@ -164,88 +178,106 @@ const MainPage: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-grow w-3/4 self-center border-2 border-gray-300 mt-8 p-4 rounded-2xl">
+      <div className="flex-grow w-2/3 self-center border-2 border-gray-300 mt-8 p-4 rounded-2xl">
         <div className="flex p-4 border-b text-xl font-bold">
           인기 작품 미리 보기
         </div>
-        <div className="flex flex-wrap border-b border-gray-300">
-          <div className="flex flex-col items-center w-1/3">
+        <div className="flex flex-wrap border-b border-gray-300 mt-8 mb-12 ">
+          <div className="flex flex-col items-center w-1/3 mb-8">
             <img
-              src="example1.jpg"
-              alt="Example 1"
-              className="w-48 aspect-square"
+              src={image1}
+              className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 "
+              onClick={handleClick}
             />
-            <p>텍스트 설명 1</p>
+            <p className="w-60 p-1 font-bold shadow-lg rounded-b-lg bg-gray-100">
+              호기심 많은 소녀
+            </p>
           </div>
 
           <div className="flex flex-col items-center w-1/3">
             <img
-              src="example2.jpg"
-              alt="Example 2"
-              className="w-48 aspect-square"
+              src={image2}
+              className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 "
+              onClick={handleClick}
             />
-            <p>텍스트 설명 2</p>
+            <p className="w-60 p-1 font-bold shadow-lg rounded-b-lg bg-gray-100">
+              끝없는 비밀의 길
+            </p>
           </div>
 
           <div className="flex flex-col items-center w-1/3">
             <img
-              src="example3.jpg"
-              alt="Example 3"
-              className="w-48 aspect-square"
+              src={image3}
+              className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 "
+              onClick={handleClick}
             />
-            <p>텍스트 설명 3</p>
+            <p className="w-60 p-1 font-bold shadow-lg rounded-b-lg bg-gray-100">
+              무서운 곰과 친구하기
+            </p>
           </div>
-          <div className="flex flex-col items-center w-1/3">
+          <div className="flex flex-col items-center w-1/3 mb-8">
             <img
-              src="example1.jpg"
-              alt="Example 1"
-              className="w-48 aspect-square"
+              src={image4}
+              className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 "
+              onClick={handleClick}
             />
-            <p>텍스트 설명 1</p>
-          </div>
-
-          <div className="flex flex-col items-center w-1/3">
-            <img
-              src="example2.jpg"
-              alt="Example 2"
-              className="w-48 aspect-square"
-            />
-            <p>텍스트 설명 2</p>
+            <p className="w-60 p-1 font-bold shadow-lg rounded-b-lg bg-gray-100">
+              신비로운 숲 속 비밀의 장소
+            </p>
           </div>
 
           <div className="flex flex-col items-center w-1/3">
             <img
-              src="example3.jpg"
-              alt="Example 3"
-              className="w-48 aspect-square"
+              src={image5}
+              className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 "
+              onClick={handleClick}
             />
-            <p>텍스트 설명 3</p>
-          </div>
-          <div className="flex flex-col items-center w-1/3">
-            <img
-              src="example1.jpg"
-              alt="Example 1"
-              className="w-48 aspect-square"
-            />
-            <p>텍스트 설명 1</p>
+            <p className="w-60 p-1 font-bold shadow-lg rounded-b-lg bg-gray-100">
+              요정의 비밀
+            </p>
           </div>
 
           <div className="flex flex-col items-center w-1/3">
             <img
-              src="example2.jpg"
-              alt="Example 2"
-              className="w-48 aspect-square"
+              src={image6}
+              className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 "
+              onClick={handleClick}
             />
-            <p>텍스트 설명 2</p>
+            <p className="w-60 p-1 font-bold shadow-lg rounded-b-lg bg-gray-100">
+              해적선의 보물을 찾아서
+            </p>
+          </div>
+          <div className="flex flex-col items-center w-1/3 mb-8">
+            <img
+              src={image7}
+              className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 "
+              onClick={handleClick}
+            />
+            <p className="w-60 p-1 font-bold shadow-lg rounded-b-lg bg-gray-100">
+              맑은 하늘과 호수
+            </p>
           </div>
 
           <div className="flex flex-col items-center w-1/3">
             <img
-              src="example3.jpg"
-              alt="Example 3"
-              className="w-48 aspect-square"
+              src={image8}
+              className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 "
+              onClick={handleClick}
             />
-            <p>텍스트 설명 3</p>
+            <p className="w-60 p-1 font-bold shadow-lg rounded-b-lg bg-gray-100">
+              친구들과 숨바꼭질
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center w-1/3">
+            <img
+              src={image9}
+              className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 "
+              onClick={handleClick}
+            />
+            <p className="w-60 p-1 font-bold shadow-lg rounded-b-lg bg-gray-100">
+              숲 속 오두막집의 비밀
+            </p>
           </div>
         </div>
       </div>
