@@ -158,7 +158,11 @@ const FirstResultPage: React.FC = () => {
         setIsFetching(false)
       );
     }
-  }, [currentPage?.imageUrl, currentPage?.pageId]); // Trigger only if these specific fields change
+  }, [currentPage?.imageUrl, currentPage?.pageId, dispatch]);
+
+  useEffect(() => {
+    setLoading(false); // 이미지 로딩 완료 후 로딩 상태 업데이트
+  }, [currentPage?.imageUrl]);
 
   const createAndSaveImage = async (pageId: number) => {
     const config = fetchConfig();
@@ -174,7 +178,6 @@ const FirstResultPage: React.FC = () => {
 
       // 이미지 저장 요청
       if (imageResponse.status === 200 && imageResponse.data.image_url) {
-        dispatch(setImage({ pageId, imageUrl: imageResponse.data.image_url }));
         console.log("Redux 상태에 이미지 URL 설정");
 
         const saveImageResponse = await axios.post(
@@ -187,6 +190,7 @@ const FirstResultPage: React.FC = () => {
           config
         );
         console.log("이미지 저장 성공!", saveImageResponse);
+        dispatch(setImage({ pageId, imageUrl: imageResponse.data.image_url }));
       } else {
         console.error("이미지 생성 실패:", imageResponse);
       }
@@ -238,12 +242,6 @@ const FirstResultPage: React.FC = () => {
           );
 
           if (imageResponse.status === 200 && imageResponse.data.image_url) {
-            dispatch(
-              setImage({
-                pageId: currentPage?.pageId,
-                imageUrl: imageResponse.data.image_url,
-              })
-            );
             console.log("이미지 생성 성공:", imageResponse.data.image_url);
 
             // 이미지 저장 요청
@@ -257,6 +255,12 @@ const FirstResultPage: React.FC = () => {
               config
             );
             console.log("이미지 저장 성공");
+            dispatch(
+              setImage({
+                pageId: currentPage?.pageId,
+                imageUrl: imageResponse.data.image_url,
+              })
+            );
           } else {
             console.error("이미지 생성 요청 실패:", imageResponse);
           }
