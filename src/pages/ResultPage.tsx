@@ -14,6 +14,7 @@ const ResultPage: React.FC = () => {
     state.story.pages.filter((page: Page) => [2, 3, 4, 5].includes(page.pageId))
   );
   const [currentPageIndex, setCurrentPageIndex] = useState(0); // 현재 페이지 인덱스
+  const [fade, setFade] = useState(true);
 
   const nextPage = () => {
     setCurrentPageIndex((prev) => (prev + 1 < pages.length ? prev + 1 : prev));

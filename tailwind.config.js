@@ -13,7 +13,11 @@ module.exports = {
       pot: "705px",
       "lg-pot": "960px",
     },
-    extend: {},
+    extend: {
+      animation: {
+        spin: "spin 1s linear infinite",
+      },
+    },
   },
   variants: {
     extend: {},

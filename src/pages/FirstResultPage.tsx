@@ -10,6 +10,7 @@ import {
 import axios, { AxiosRequestConfig } from "axios";
 import Loading from "../components/Loading";
 import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const FirstResultPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const FirstResultPage: React.FC = () => {
       : undefined; // null 대신 undefined 사용, 초기값 조정 필요시 조정
   }); //pages 배열이 비어 있으면 undefined를 반환
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false); // 중복 호출을 방지하기 위한 로직
 
   const fetchConfig = () => {
@@ -294,10 +295,23 @@ const FirstResultPage: React.FC = () => {
           </div>
         </div>
         <div className="flex-1 p-4 bg-[#FDF9F6] overflow-y-auto">
-          {currentPage?.imageUrl ? (
+          {/* {currentPage?.imageUrl ? (
             <img src={currentPage.imageUrl} alt="Story Illustration" />
           ) : (
             <p>이미지 로딩 중...</p>
+          )} */}
+          {currentPage?.imageUrl ? (
+            loading ? (
+              <LoadingSpinner />
+            ) : (
+              <img
+                src={currentPage.imageUrl}
+                alt="Story Illustration"
+                onLoad={() => setLoading(false)}
+              />
+            )
+          ) : (
+            <LoadingSpinner /> // 이미지 로딩 중 텍스트 대신 스피너 표시
           )}
         </div>
       </div>
@@ -307,7 +321,7 @@ const FirstResultPage: React.FC = () => {
             className="px-6 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-700"
             onClick={handleViewCompletedBook}
           >
-            완성된 책 보기
+            완성된 이야기를 확인해보세요!
           </button>
         </div>
       )}
