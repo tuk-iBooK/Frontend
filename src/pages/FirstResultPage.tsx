@@ -9,9 +9,12 @@ import {
 
 import axios, { AxiosRequestConfig } from "axios";
 import Loading from "../components/Loading";
+import { useNavigate } from "react-router-dom";
 
 const FirstResultPage: React.FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const story = useSelector((state: any) => state.story.value as number);
   const pages = useSelector((state: any) => state.story.pages || []);
 
@@ -83,6 +86,11 @@ const FirstResultPage: React.FC = () => {
   useEffect(() => {
     console.log("Pages 업데이트됨:", pages);
   }, [pages]);
+
+  const handleViewCompletedBook = () => {
+    // navigate(`/result${story}`); // ResultPage 컴포넌트에 story id를 파라미
+    navigate("/result", { state: { story: story } });
+  };
 
   const fetchData = async (story: number, config: AxiosRequestConfig) => {
     setLoading(true);
@@ -293,6 +301,17 @@ const FirstResultPage: React.FC = () => {
           )}
         </div>
       </div>
+      {pages.length >= 5 && (
+        <div className="w-full bg-[#FDF9F6] border-t border-gray-300 p-3 text-center">
+          <button
+            className="px-6 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-700"
+            onClick={handleViewCompletedBook}
+          >
+            완성된 책 보기
+          </button>
+        </div>
+      )}
+
       <div className="w-full bg-[#FDF9F6] border-t border-gray-300 p-3">
         {/* 임시 방편 */}
         <p>{pages.length - 1}</p>

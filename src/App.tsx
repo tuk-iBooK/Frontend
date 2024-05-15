@@ -12,6 +12,7 @@ import BackgroundSettingPage from "./pages/BackgroundSettingPage";
 import CharacterSettingPage from "./pages/CharacterSettingPage";
 import SummarySettingPage from "./pages/SummarySettingPage";
 import FirstResultPage from "./pages/FirstResultPage";
+import ResultPage from "./pages/ResultPage";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/character" element={<CharacterSettingPage />} />
             <Route path="/summary" element={<SummarySettingPage />} />
             <Route path="/firstresult" element={<FirstResultPage />} />
+            <Route path="/result" element={<ResultPage />} />
           </Routes>
         </div>
       </BrowserRouter>
