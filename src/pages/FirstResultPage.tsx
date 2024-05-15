@@ -269,22 +269,27 @@ const FirstResultPage: React.FC = () => {
         setLoading(false);
       }
     },
-    [dispatch, story, currentPage, fetchConfig]
+    [dispatch, story, currentPage, fetchConfig] //FDF9F6
   );
 
   return (
-    <div className="flex flex-col max-w-7xl bg-[#E7E3E0] opacity-75 h-screen mx-auto my-8 p-4 shadow-2xl">
+    <div className="flex flex-col w-full h-1/3 bg-[#E7E3E0] opacity-75 mx-auto my-8 p-4 shadow-2xl">
       <div className="flex flex-grow">
-        <div className="flex-1 p-2 border-r border-gray-300 bg-[#FDF9F6] overflow-y-auto shadow-4xl">
-          <div className="prose">
-            <h1>{currentPage?.title || ""}</h1>
-            <p>{currentPage?.content || ""}</p>
+        <div className="flex-1 p-2 border-r border-gray-300 bg-[#FDF9F6] shadow-4xl">
+          <div className="w-full h-1/2 mt-30 items-center">
+            <div className="p-6 m-4 text-2xl font-bold">
+              <h1>{currentPage?.title || ""}</h1>
+            </div>
+            <div className="bg-white shadow-lg rounded-lg p-12 mt-8 mb-12 text-lg">
+              <p>{currentPage?.content || ""}</p>
+            </div>
+
             {currentPage?.choices && currentPage.choices.length > 0 ? (
               currentPage.choices.map((choice: string, index: number) => (
                 <button
                   key={index}
                   onClick={() => handleChoice(choice)}
-                  className="w-3/4 py-2 mb-4 rounded-2xl text-black text-ml bg-[#FFF0A3] hover:bg-[#FFF8D6] text-center shadow-lg hover:shadow-none"
+                  className="w-3/4 py-2 mb-4 rounded-2xl text-black text-lg bg-[#FFF0A3] hover:bg-[#FFF8D6] text-center shadow-lg hover:shadow-none"
                 >
                   {choice}
                 </button>
@@ -294,41 +299,47 @@ const FirstResultPage: React.FC = () => {
             )}
           </div>
         </div>
-        <div className="flex-1 p-4 bg-[#FDF9F6] overflow-y-auto">
+        <div
+          className="flex-1 p-8 w-full items-center justify-center bg-[#FDF9F6] text-lg"
+          style={{ height: "700px" }}
+        >
           {/* {currentPage?.imageUrl ? (
             <img src={currentPage.imageUrl} alt="Story Illustration" />
           ) : (
             <p>이미지 로딩 중...</p>
           )} */}
+
           {currentPage?.imageUrl ? (
             loading ? (
               <LoadingSpinner />
             ) : (
-              <img
-                src={currentPage.imageUrl}
-                alt="Story Illustration"
-                onLoad={() => setLoading(false)}
-              />
+              <div className="flex items-center justify-center w-full h-full">
+                <img
+                  src={currentPage.imageUrl}
+                  alt="Story Illustration"
+                  onLoad={() => setLoading(false)}
+                />
+              </div>
             )
           ) : (
             <LoadingSpinner /> // 이미지 로딩 중 텍스트 대신 스피너 표시
           )}
         </div>
       </div>
-      {pages.length >= 5 && (
-        <div className="w-full bg-[#FDF9F6] border-t border-gray-300 p-3 text-center">
+
+      <div className="flex w-full items-center justify-center bg-[#FDF9F6] border-t border-gray-300 p-3">
+        {/* 임시 방편 */}
+        <p>{pages.length - 1}</p>
+      </div>
+      <div className="flex items-center justify-center">
+        {pages.length >= 5 && (
           <button
-            className="px-6 py-2 mt-4 text-white bg-blue-500 rounded hover:bg-blue-700"
+            className="w-1/3 py-4 mt-4 mb-4 p-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
             onClick={handleViewCompletedBook}
           >
             완성된 이야기를 확인해보세요!
           </button>
-        </div>
-      )}
-
-      <div className="w-full bg-[#FDF9F6] border-t border-gray-300 p-3">
-        {/* 임시 방편 */}
-        <p>{pages.length - 1}</p>
+        )}
       </div>
     </div>
   );
