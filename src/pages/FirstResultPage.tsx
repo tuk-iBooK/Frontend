@@ -178,7 +178,10 @@ const FirstResultPage: React.FC = () => {
 
       // 이미지 저장 요청
       if (imageResponse.status === 200 && imageResponse.data.image_url) {
+        dispatch(setImage({ pageId, imageUrl: imageResponse.data.image_url }));
+
         console.log("Redux 상태에 이미지 URL 설정");
+        console.log("url :", imageResponse.data.image_url);
 
         const saveImageResponse = await axios.post(
           "http://localhost:8000/api/story/save_image/",
@@ -190,7 +193,6 @@ const FirstResultPage: React.FC = () => {
           config
         );
         console.log("이미지 저장 성공!", saveImageResponse);
-        dispatch(setImage({ pageId, imageUrl: imageResponse.data.image_url }));
       } else {
         console.error("이미지 생성 실패:", imageResponse);
       }
