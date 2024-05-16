@@ -68,11 +68,6 @@ const MainPage: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("id");
-    setIsLoggedIn(false);
-  };
-
   function handleClick() {
     navigate("/result");
   }
@@ -80,7 +75,7 @@ const MainPage: React.FC = () => {
   return (
     <div className="flex flex-col h-screen overflow-y-auto">
       {/* Top-level full-width container for login/signup */}
-      {/* <div className="w-full p-4 pr-12 flex justify-end items-center bg-black">
+      {/* <div className="w-full p-4 pr-12 flex justify-end items-center">
         <Link
           to="/Login"
           className="text-gray-500 hover:underline hover:text-black mr-4"
