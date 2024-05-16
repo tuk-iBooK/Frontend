@@ -74,34 +74,6 @@ const MainPage: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto">
-      {/* Top-level full-width container for login/signup */}
-      {/* <div className="w-full p-4 pr-12 flex justify-end items-center">
-        <Link
-          to="/Login"
-          className="text-gray-500 hover:underline hover:text-black mr-4"
-        >
-          로그인
-        </Link>
-        <Link
-          to="/SignUp"
-          className="text-gray-500 hover:underline hover:text-black"
-        >
-          회원가입
-        </Link>
-        <div>
-          {isLoggedIn ? (
-            <button
-              onClick={handleLogout}
-              className="mr-4 text-gray-500 hover:underline hover:text-black"
-            >
-              로그아웃
-            </button>
-          ) : (
-            <></>
-          )}{" "}
-        </div>
-      </div> */}
-
       {/* 헤더바 */}
       <div className="w-full p-4"> {/* Header will go here */}</div>
 

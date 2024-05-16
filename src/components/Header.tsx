@@ -33,7 +33,7 @@ const Header: React.FC = () => {
 
   return (
     <div>
-      <div className="p-4 items-end justify-end">
+      <div className="pl-12 p-4 items-end justify-end">
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
@@ -58,7 +58,7 @@ const Header: React.FC = () => {
           </>
         )}
       </div>
-      <div className="flex justify-between items-center p-2 mt-8">
+      <div className="flex justify-between items-center p-2 mt-2">
         <Link to="/" className="text-5xl ml-12 font-bold text-[#FFD600]">
           I-Book
         </Link>
