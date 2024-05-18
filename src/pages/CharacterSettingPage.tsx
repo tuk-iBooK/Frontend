@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addCharacter, removeCharacter } from "../features/characterSlice";
 import axios from "axios";
+import StepIndicator from "../components/StepIndicator"; // 상단에 추가
 
 interface Character {
   age: number;
@@ -100,8 +101,9 @@ const CharacterSettingPage: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
-      <div className="w-3/4 mt-24 flex-1 justify-between items-center">
-        <div className="bg-[#FFF0A3] p-4 mb-8 rounded-2xl shadow-lg">
+      <StepIndicator currentStep={0} />
+      <div className="w-3/4 flex-1 justify-between items-center">
+        <div className="bg-[#FFF0A3] p-4 mb-8 rounded-tr-2xl rounded-b-2xl shadow-lg">
           <div className="text-xl font-bold text-black font-['Inria'] p-4">
             4. 원하는 이야기의 등장인물을 설정하세요
           </div>

@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import { setSummary } from "../features/summarySlice";
 import Loading from "../components/Loading";
+import StepIndicator from "../components/StepIndicator"; // 상단에 추가
 
 const SummarySettingPage: React.FC = () => {
   const story = useSelector((state: any) => state.story.value) as number;
@@ -82,8 +83,9 @@ const SummarySettingPage: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
-      <div className="w-3/4 mt-24 flex-1 justify-between items-center">
-        <div className="bg-[#FFF0A3] p-4 mb-8 rounded-2xl shadow-lg">
+      <StepIndicator currentStep={0} />
+      <div className="w-3/4 flex-1 justify-between items-center">
+        <div className="bg-[#FFF0A3] p-4 mb-8 rounded-tr-2xl rounded-b-2xl shadow-lg">
           <div className="text-xl font-bold text-black font-['Inria'] p-4">
             5. 원하는 이야기의 줄거리를 간단히 설정하세요
           </div>

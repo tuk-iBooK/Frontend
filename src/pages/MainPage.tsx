@@ -145,6 +145,8 @@ const MainPage: React.FC = () => {
         </div>
       </div>
 
+      <div>하이</div>
+
       <div className="flex-grow w-2/3 self-center border-2 border-gray-300 mt-8 p-4 rounded-2xl">
         <div className="flex p-4 border-b text-xl font-bold">
           인기 작품 미리 보기
