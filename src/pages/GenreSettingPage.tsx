@@ -32,7 +32,6 @@ const GenreSettingPage: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Selected genres:", selectedGenres);
     navigate("/background", { state: { genre: selectedGenres } });
   };
 
@@ -46,7 +45,7 @@ const GenreSettingPage: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
-      <StepIndicator currentStep={0} className="self-start" />
+      <StepIndicator currentStep={0} />
       <div className="w-3/4 flex-1 justify-between items-center">
         <div className="bg-[#FFF0A3] p-4 mb-8 rounded-tr-2xl rounded-b-2xl shadow-lg">
           <div className="text-xl font-bold text-black font-['Inria'] p-4">

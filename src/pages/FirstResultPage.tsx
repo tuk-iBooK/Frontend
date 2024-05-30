@@ -26,7 +26,7 @@ const FirstResultPage: React.FC = () => {
   }); //pages 배열이 비어 있으면 undefined를 반환
 
   const [loading, setLoading] = useState(true);
-  const [isFetching, setIsFetching] = useState(false); // 중복 호출을 방지하기 위한 로직
+  const [isFetching, setIsFetching] = useState(false); // 중복 호출을 방지하기 위한 상태
 
   const fetchConfig = () => {
     const token = localStorage.getItem("id");
@@ -88,14 +88,15 @@ const FirstResultPage: React.FC = () => {
     console.log("Pages 업데이트됨:", pages);
   }, [pages]);
 
+  //결과 페이지로 이동 추후 수정
   const handleViewCompletedBook = () => {
-    // navigate(`/result${story}`); // ResultPage 컴포넌트에 story id를 파라미
     navigate("/result", { state: { story: story } });
   };
 
   const fetchData = async (story: number, config: AxiosRequestConfig) => {
     setLoading(true);
     try {
+      // API 요청 : 첫번째 이야기 생성
       const response = await axios.post(
         "http://localhost:8000/api/story/register/chatgpt/",
         { story_id: story },
@@ -104,11 +105,6 @@ const FirstResultPage: React.FC = () => {
       if (response.status === 200) {
         const parsedData = parseResponse(response.data.answer);
 
-        // const lastPage = pages.length > 0 ? pages[pages.length - 1] : null;
-        // if (!lastPage || lastPage.content !== parsedData.content) {
-        //   dispatch(addPage({ ...parsedData }));
-        //   console.log("Redux에 페이지 추가됨", parsedData);
-        // }
         dispatch(addPage({ ...parsedData }));
         console.log("Redux에 페이지 추가됨", parsedData);
 
@@ -147,6 +143,19 @@ const FirstResultPage: React.FC = () => {
   //   }
   // }, [currentPage?.imageUrl, currentPage?.pageId]); // 의존성 배열 수정 (<< currentPage)
 
+  // useEffect(() => {
+  //   if (currentPage && !currentPage.imageUrl && !isFetching) {
+  //     console.log(
+  //       "Creating and saving image for currentPage:",
+  //       currentPage.pageId
+  //     );
+  //     setIsFetching(true);
+  //     createAndSaveImage(currentPage.pageId).finally(() =>
+  //       setIsFetching(false)
+  //     );
+  //   }
+  // }, [currentPage?.imageUrl, currentPage?.pageId, dispatch]);
+
   useEffect(() => {
     if (currentPage && !currentPage.imageUrl && !isFetching) {
       console.log(
@@ -159,7 +168,6 @@ const FirstResultPage: React.FC = () => {
       );
     }
   }, [currentPage?.imageUrl, currentPage?.pageId, dispatch]);
-
   useEffect(() => {
     setLoading(false); // 이미지 로딩 완료 후 로딩 상태 업데이트
   }, [currentPage?.imageUrl]);
@@ -167,7 +175,7 @@ const FirstResultPage: React.FC = () => {
   const createAndSaveImage = async (pageId: number) => {
     const config = fetchConfig();
     if (!config) return;
-    // 이미지 생성 요청
+    // 선택에 따른 이미지 생성 요청
     try {
       const imageResponse = await axios.post(
         "http://localhost:8000/api/story/register/chatgpt/image/",
@@ -275,7 +283,7 @@ const FirstResultPage: React.FC = () => {
         setLoading(false);
       }
     },
-    [dispatch, story, currentPage, fetchConfig] //FDF9F6
+    [dispatch, story, currentPage, fetchConfig]
   );
 
   return (

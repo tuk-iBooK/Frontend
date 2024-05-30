@@ -3,6 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { setStory } from "../features/storySlice";
 import { useDispatch } from "react-redux";
+import { motion } from "framer-motion";
+import { useRef } from "react";
+
 //더미데이터
 import image1 from "../assets/public/01.png";
 import image2 from "../assets/public/02.png";
@@ -15,6 +18,10 @@ import image8 from "../assets/public/08.png";
 import image9 from "../assets/public/09.png";
 
 const MainPage: React.FC = () => {
+  const divRef = useRef<HTMLDivElement>(null);
+  const scrollToBottom = () => {
+    divRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -76,8 +83,10 @@ const MainPage: React.FC = () => {
     <div className="flex flex-col h-screen overflow-y-auto">
       {/* 헤더바 */}
       <div className="w-full p-4"> {/* Header will go here */}</div>
-
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
         className="flex bg-[#FFF0A3] items-center justify-center"
         style={{ height: "400px", minHeight: "400px" }}
       >
@@ -143,11 +152,76 @@ const MainPage: React.FC = () => {
             시작하기
           </button>
         </div>
-      </div>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="flex bg-red-500 items-center justify-center"
+        style={{ height: "600px", minHeight: "600px" }}
+      >
+        <div className="flex items-center">
+          <div
+            className="absolute w-60 h-60 rounded-full bg-[#FFE55A] opacity-85"
+            style={{
+              top: "50%",
+              left: "90%",
+              transform: "translateX(-220%)",
+            }}
+          ></div>
+        </div>
+      </motion.div>
+      <motion.div
+        ref={divRef}
+        className="text-5xl p-12 font-bold text-black bg-blue-400"
+        initial={{ opacity: 0.1 }}
+        whileInView={{
+          opacity: 1,
+          borderRadius: ["50%", "50%"],
+          transition: { delay: 0.1 },
+        }}
+        whileHover={{
+          scale: 1.2,
+          transition: { type: "spring", stiffness: 100, damping: 10 },
+        }}
+      >
+        아이북을 소개합니다!
+      </motion.div>
 
-      <div>하이</div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="flex mt-64 bg-red-500 items-center justify-center"
+        style={{ height: "600px", minHeight: "600px" }}
+      >
+        하이
+      </motion.div>
 
-      <div className="flex-grow w-2/3 self-center border-2 border-gray-300 mt-8 p-4 rounded-2xl">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="flex mt-96 bg-red-500 items-center justify-center"
+        style={{ height: "600px", minHeight: "600px" }}
+      >
+        하이
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          transition: { delay: 0.1 },
+        }}
+      />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="flex-grow w-2/3 self-center border-2 border-gray-300 mt-8 p-4 rounded-2xl"
+      >
         <div className="flex p-4 border-b text-xl font-bold">
           인기 작품 미리 보기
         </div>
@@ -249,7 +323,7 @@ const MainPage: React.FC = () => {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
