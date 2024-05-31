@@ -15,7 +15,7 @@
     "@types/redux": "^3.6.0",
     "axios": "^1.6.7",
     "classnames": "^2.5.1",
-    "framer-motion": "^11.2.4",
+    "framer-motion": "^11.2.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-pageflip": "^2.0.3",

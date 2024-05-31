@@ -87,6 +87,7 @@ const MainPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
+        exit={{ opacity: 0, y: 20 }}
         className="flex bg-[#FFF0A3] items-center justify-center"
         style={{ height: "400px", minHeight: "400px" }}
       >
@@ -157,24 +158,15 @@ const MainPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
+        exit={{ opacity: 0, y: 20 }}
         className="flex bg-red-500 items-center justify-center"
         style={{ height: "600px", minHeight: "600px" }}
-      >
-        <div className="flex items-center">
-          <div
-            className="absolute w-60 h-60 rounded-full bg-[#FFE55A] opacity-85"
-            style={{
-              top: "50%",
-              left: "90%",
-              transform: "translateX(-220%)",
-            }}
-          ></div>
-        </div>
-      </motion.div>
+      ></motion.div>
       <motion.div
         ref={divRef}
         className="text-5xl p-12 font-bold text-black bg-blue-400"
         initial={{ opacity: 0.1 }}
+        exit={{ opacity: 0, y: 20 }}
         whileInView={{
           opacity: 1,
           borderRadius: ["50%", "50%"],
@@ -192,6 +184,7 @@ const MainPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
+        exit={{ opacity: 0, y: 20 }}
         className="flex mt-64 bg-red-500 items-center justify-center"
         style={{ height: "600px", minHeight: "600px" }}
       >
@@ -202,6 +195,7 @@ const MainPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
+        exit={{ opacity: 0, y: 20 }}
         className="flex mt-96 bg-red-500 items-center justify-center"
         style={{ height: "600px", minHeight: "600px" }}
       >
@@ -210,6 +204,7 @@ const MainPage: React.FC = () => {
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
+        exit={{ opacity: 0, y: 20 }}
         whileInView={{
           opacity: 1,
           y: 0,
@@ -220,6 +215,7 @@ const MainPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
+        exit={{ opacity: 0, y: 20 }}
         className="flex-grow w-2/3 self-center border-2 border-gray-300 mt-8 p-4 rounded-2xl"
       >
         <div className="flex p-4 border-b text-xl font-bold">
