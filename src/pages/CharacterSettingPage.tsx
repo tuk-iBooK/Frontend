@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { addCharacter, removeCharacter } from "../features/characterSlice";
 import axios from "axios";
 import StepIndicator from "../components/StepIndicator"; // 상단에 추가
+import QuestionIcon from "../assets/public/question.png"; // 이 경로가 올바른지 확인하세요.
 
 interface Character {
   age: number;
@@ -29,6 +30,7 @@ const CharacterSettingPage: React.FC = () => {
   const [age, setAge] = useState<number>(1);
   const [gender, setGender] = useState<string>("남");
   const [personality, setPersonality] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const handleAddCharacter = () => {
     if (
@@ -42,6 +44,10 @@ const CharacterSettingPage: React.FC = () => {
 
   const handleRemoveCharacter = (index: number) => {
     dispatch(removeCharacter(index));
+  };
+
+  const toggleModal = (): void => {
+    setIsModalOpen(!isModalOpen);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -202,7 +208,8 @@ const CharacterSettingPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-center items-center m-4">
+          <div className="flex justify-center items-center">
+            <div className="flex-grow w-24"></div>
             <button
               onClick={handleAddCharacter}
               className="w-12 h-12 bg-white text-gray-500 rounded-full flex justify-center items-center shadow-lg hover:shadow-none hover:bg-[#EBEBEB] hover:text-white"
@@ -222,6 +229,28 @@ const CharacterSettingPage: React.FC = () => {
                 />
               </svg>
             </button>
+            <div className="flex-grow"></div>
+            <div className="mr-4">
+              <button onClick={toggleModal}>
+                <img src={QuestionIcon} alt="Question" className="w-10 h-10" />
+              </button>
+              {isModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                  <div className="w-1/2 h-1/2 bg-white p-8 rounded-lg shadow-xl">
+                    <h2 className="text-xl mb-4">
+                      등장인물 이렇게 작성해보세요!
+                    </h2>
+                    <p>1. ㅇㅁㄴㅇ 2. 엄ㄴ아 3. ㄴ멍ㅁㄴㄴ</p>
+                    <button
+                      onClick={toggleModal}
+                      className="mt-4 bg-gray-300 text-white p-2 rounded"
+                    >
+                      닫기
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="w-full flex p-4 bg-[#FFF0A3] rounded-2xl justify-center shadow-lg">

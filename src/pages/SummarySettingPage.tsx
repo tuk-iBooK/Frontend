@@ -5,6 +5,7 @@ import axios from "axios";
 import { setSummary } from "../features/summarySlice";
 import Loading from "../components/Loading";
 import StepIndicator from "../components/StepIndicator"; // 상단에 추가
+import QuestionIcon from "../assets/public/question.png"; // 이 경로가 올바른지 확인하세요.
 
 const SummarySettingPage: React.FC = () => {
   const story = useSelector((state: any) => state.story.value) as number;
@@ -19,9 +20,14 @@ const SummarySettingPage: React.FC = () => {
     (state: any) => state.period.selectedPeriods
   ) as string[];
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const toggleModal = (): void => {
+    setIsModalOpen(!isModalOpen);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -124,7 +130,27 @@ const SummarySettingPage: React.FC = () => {
             </div>
             <div className="p-4 rounded-2xl w-1/5 flex justify-center items-center"></div>
           </div>
+          <div className="mr-4 flex justify-end">
+            <button onClick={toggleModal}>
+              <img src={QuestionIcon} alt="Question" className="w-10 h-10" />
+            </button>
+            {isModalOpen && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                <div className="w-1/2 h-1/2 bg-white p-8 rounded-lg shadow-xl">
+                  <h2 className="text-xl mb-4">줄거리 이렇게 작성해보세요!</h2>
+                  <p>1. ㅇㅁㄴㅇ 2. 엄ㄴ아 3. ㄴ멍ㅁㄴㄴ</p>
+                  <button
+                    onClick={toggleModal}
+                    className="mt-4 bg-gray-300 text-white p-2 rounded"
+                  >
+                    닫기
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
+
         <div>
           <button
             className="mb-4 mt-8 px-16 py-3 pr-16 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
