@@ -306,7 +306,7 @@ const FirstResultPage: React.FC = () => {
         <p>{pages.length}</p>
       </div>
       <div className="flex items-center justify-center">
-        {pages.length >= 5 && (
+        {pages.length >= 4 && (
           <button
             className="w-1/3 py-4 mt-4 mb-4 p-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
             onClick={handleViewCompletedBook}
