@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { addPeriod, removePeriod } from "../features/periodSlice";
+import StepIndicator from "../components/StepIndicator"; // 상단에 추가
 
 const PeriodSettingPage: React.FC = () => {
   const location = useLocation();
@@ -55,8 +56,9 @@ const PeriodSettingPage: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
-      <div className="w-3/4 mt-24 flex-1 justify-between items-center">
-        <div className="bg-[#FFF0A3] p-4 mb-8 rounded-2xl shadow-lg">
+      <StepIndicator currentStep={0} />
+      <div className="w-3/4 flex-1 justify-between items-center">
+        <div className="bg-[#FFF0A3] p-4 mb-8 rounded-tr-2xl rounded-b-2xl shadow-lg">
           <div className="text-xl font-bold text-black font-['Inria'] p-4">
             3. 원하는 이야기의 시간적 배경을 선택 혹은 입력하세요
           </div>

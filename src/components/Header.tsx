@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { loginSuccess, logout } from "../redux/authActions";
+import { loginSuccess } from "../redux/authActions";
 import { Link, useNavigate } from "react-router-dom";
 
 const Header: React.FC = () => {
