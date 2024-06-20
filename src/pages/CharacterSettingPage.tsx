@@ -236,14 +236,22 @@ const CharacterSettingPage: React.FC = () => {
               </button>
               {isModalOpen && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                  <div className="w-1/2 h-1/2 bg-white p-8 rounded-lg shadow-xl">
-                    <h2 className="text-xl mb-4">
+                  <div className="w-1/2 bg-white p-8 rounded-lg shadow-xl">
+                    <h2 className="text-2xl mb-8 font-bold">
                       등장인물 이렇게 작성해보세요!
                     </h2>
-                    <p>1. ㅇㅁㄴㅇ 2. 엄ㄴ아 3. ㄴ멍ㅁㄴㄴ</p>
+                    <h3 className="text-xl mt-4">
+                      주인공의 성격(특징) 주인공의 성격, 관심사, 특별한 능력
+                      등을 강조하면 좋습니다.
+                    </h3>
+                    <h3 className="text-xl mt-4">
+                      {" "}
+                      예 : 홍길동은 책을 좋아하고, 용감하며, 친구들에게 착한
+                      친구로 알려져 있어요.
+                    </h3>
                     <button
                       onClick={toggleModal}
-                      className="mt-4 bg-gray-300 text-white p-2 rounded"
+                      className="mt-8 bg-gray-300 text-white p-2 rounded"
                     >
                       닫기
                     </button>

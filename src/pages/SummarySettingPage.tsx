@@ -136,12 +136,34 @@ const SummarySettingPage: React.FC = () => {
             </button>
             {isModalOpen && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                <div className="w-1/2 h-1/2 bg-white p-8 rounded-lg shadow-xl">
-                  <h2 className="text-xl mb-4">줄거리 이렇게 작성해보세요!</h2>
-                  <p>1. ㅇㅁㄴㅇ 2. 엄ㄴ아 3. ㄴ멍ㅁㄴㄴ</p>
+                <div className="w-2/3 bg-white p-8 rounded-lg shadow-xl">
+                  <h2 className="text-2xl mb-8 font-bold">
+                    줄거리 이렇게 작성해보세요!
+                  </h2>
+                  <h3 className="text-xl font-bold">
+                    1. 간단하고 명확한 문자
+                    <h4 className="font-normal">
+                      예 : “길동이는 호기심이 많은 소년이었어요. 그는 학교
+                      도서관에서 낡은 일기장을 발견했어요.”
+                    </h4>
+                  </h3>
+                  <h3 className="text-xl mt-4 font-bold">
+                    2. 흥미로운 시작
+                    <h4 className="font-normal">
+                      예 : “어느 날, 길동이는 도서관에서 오래된 일기장을
+                      발견했어요. 그 일기장은 신비한 비밀을 담고 있었어요.”
+                    </h4>
+                  </h3>
+                  <h3 className="text-xl mt-4 font-bold">
+                    3. 상상력을 자극하는 요소
+                    <h4 className="font-normal">
+                      예 : “일기장에는 마법의 주문과 함께 50년 전 학교에서
+                      일어난 신비로운 사건이 적혀 있었어요.”
+                    </h4>
+                  </h3>
                   <button
                     onClick={toggleModal}
-                    className="mt-4 bg-gray-300 text-white p-2 rounded"
+                    className="mt-8 bg-gray-300 text-white p-2 rounded"
                   >
                     닫기
                   </button>
