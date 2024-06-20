@@ -24,6 +24,7 @@ const FirstResultPage: React.FC = () => {
   const [config, setConfig] = useState<AxiosRequestConfig | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState("");
+
   const toggleEditModal = () => setIsEditing(!isEditing);
 
   useEffect(() => {
@@ -214,20 +215,52 @@ const FirstResultPage: React.FC = () => {
       if (updateResponse.status === 200) {
         console.log("내용이 성공적으로 수정되었습니다! :", updateResponse);
 
-        // 새로운 선택지 요청
-        const newChoicesResponse = await axios.post(
-          "http://localhost:8000/api/story/update/",
-          { story_id: story },
-          config
-        );
-        console.log("새로운 선택지 요청 성공 :", newChoicesResponse);
+        // // 새로운 선택지 요청
+        // const newChoicesResponse = await axios.post(
+        //   "http://localhost:8000/api/story/update/",
+        //   { story_id: story },
+        //   config
+        // );
+        // console.log("새로운 선택지 요청 성공 :", newChoicesResponse);
 
         dispatch(
           addPage({
             content: newContent,
-            choices: newChoicesResponse.data.choices,
           })
         );
+
+        // 이미지 생성 및 저장 요청
+        const imageResponse = await axios.post(
+          "http://localhost:8000/api/story/register/chatgpt/image/",
+          { story_id: story, query: newContent },
+          config
+        );
+
+        if (imageResponse.status === 200 && imageResponse.data.image_url) {
+          console.log("이미지 생성 성공 :", imageResponse);
+
+          const imageUrlWithTimestamp = `${imageResponse.data.image_url}?timestamp=${new Date().getTime()}`;
+          dispatch(
+            setImage({
+              pageId: currentPage?.pageId,
+              imageUrl: imageUrlWithTimestamp,
+            })
+          );
+
+          // 이미지 저장 요청
+          await axios.post(
+            "http://localhost:8000/api/story/save_image/",
+            {
+              story_id: story,
+              page_number: currentPage?.pageId,
+              image_url: imageResponse.data.image_url,
+            },
+            config
+          );
+          console.log("이미지 저장 성공!");
+        } else {
+          console.error("이미지 생성 실패:", imageResponse);
+        }
 
         setIsEditing(false);
         setNewContent("");
