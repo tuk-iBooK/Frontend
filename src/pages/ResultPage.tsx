@@ -183,7 +183,7 @@ const ResultPage: React.FC = () => {
         <>
           <div className="flex items-center justify-center mt-8 mb-4">
             <h2 className="text-2xl font-bold text-black">
-              Page: {pages[currentPageIndex].page}
+              {pages[currentPageIndex].page}
             </h2>
           </div>
           <div className="flex items-center justify-center w-full px-8">
