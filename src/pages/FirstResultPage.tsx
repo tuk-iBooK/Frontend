@@ -342,25 +342,27 @@ const FirstResultPage: React.FC = () => {
         {isEditing && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
             <div className="w-1/2 h-1/2 bg-white p-8 rounded-lg shadow-xl">
-              <h2 className="text-xl mb-4">내용 수정하기</h2>
+              <h2 className="text-xl mb-4 font-bold">내용 수정하기</h2>
               <textarea
                 value={newContent}
                 onChange={(e) => setNewContent(e.target.value)}
-                className="textarea"
+                className="textarea w-full h-40 p-4 border border-gray-300 rounded" // 스타일 업데이트
                 placeholder="수정할 내용을 입력하세요"
               />
-              <button
-                onClick={handleEditContent}
-                className="mt-4 bg-gray-300 text-white p-2 rounded"
-              >
-                완료
-              </button>
-              <button
-                onClick={toggleEditModal}
-                className="mt-4 bg-gray-300 text-white p-2 rounded"
-              >
-                닫기
-              </button>
+              <div className="flex justify-between mt-12">
+                <button
+                  onClick={toggleEditModal}
+                  className="bg-gray-300 text-white p-2 rounded flex-grow mr-4"
+                >
+                  닫기
+                </button>
+                <button
+                  onClick={handleEditContent}
+                  className="bg-gray-300 text-white p-2 rounded flex-grow ml-4"
+                >
+                  완료
+                </button>
+              </div>
             </div>
           </div>
         )}
