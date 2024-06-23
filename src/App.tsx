@@ -14,6 +14,7 @@ import CharacterSettingPage from "./pages/CharacterSettingPage";
 import SummarySettingPage from "./pages/SummarySettingPage";
 import FirstResultPage from "./pages/FirstResultPage";
 import ResultPage from "./pages/ResultPage";
+import FlipBook from "./pages/FlipBook";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/summary" element={<SummarySettingPage />} />
             <Route path="/firstresult" element={<FirstResultPage />} />
             <Route path="/result" element={<ResultPage />} />
+            <Route path="/flipbook" element={<FlipBook />} />
           </Routes>
         </div>
       </BrowserRouter>
