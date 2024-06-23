@@ -1,11 +1,19 @@
 import HTMLFlipBook from "react-pageflip";
-import React, { useState, ForwardRefRenderFunction } from "react";
+import React, { useState, useEffect, ForwardRefRenderFunction } from "react";
 import "src/App.css";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 type PageProps = {
   children: React.ReactNode;
-  number?: string;
+  number?: number;
 };
+
+interface PageData {
+  page: number;
+  content: string;
+  image: string;
+}
 
 const PageCover: ForwardRefRenderFunction<
   HTMLDivElement,
@@ -26,7 +34,7 @@ const Page: ForwardRefRenderFunction<HTMLDivElement, PageProps> = (
 ) => {
   return (
     <div className="page bg-white" ref={ref}>
-      <h1 className="text-xl font-bold">Page Header</h1>
+      <h1 className="text-xl font-bold mb-4">Page Header</h1>
       <p>{props.children}</p>
       <p>{props.number}</p>
     </div>
@@ -37,18 +45,71 @@ const PageCoverWithRef = React.forwardRef(PageCover);
 const PageWithRef = React.forwardRef(Page);
 
 const Flipbook: React.FC = () => {
+  const location = useLocation();
+  const [pages, setPages] = useState<PageData[]>([]);
+
   const [inputText, setInputElement] = useState<string>("");
   const [text, setText] = useState<string>("이게머냐구");
-  // const printText = () => {
-  //   setText(inputText);
-  //   setInputElement("");
-  // };
+
+  const story = location.state?.story;
+  console.log("story:", story);
+
+  useEffect(() => {
+    const fetchPages = async () => {
+      try {
+        const response = await axios.get<PageData[]>(
+          `http://localhost:8000/api/story-content/list?story_id=${story}`
+        );
+        if (Array.isArray(response.data)) {
+          setPages(response.data);
+        } else {
+          setPages([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 초기화
+        }
+      } catch (error) {
+        console.error("Error fetching pages:", error);
+        setPages([]); // 오류 발생 시 빈 배열로 초기화
+      }
+    };
+
+    fetchPages();
+  }, [story]);
 
   return (
     <div
       style={{ backgroundColor: "lightgray", height: "100vh", padding: "20px" }}
     >
-      <HTMLFlipBook
+      {pages.length > 0 ? (
+        <HTMLFlipBook
+          width={550}
+          height={650}
+          flippingTime={1000}
+          style={{ margin: "0 auto" }}
+          maxShadowOpacity={0.5}
+          className="album-web"
+          showCover={true}
+        >
+          <PageCoverWithRef>try</PageCoverWithRef>
+          {pages.map((page, index) => (
+            <PageWithRef number={page.page} key={index}>
+              <img
+                src={page.image}
+                alt={`Page ${page.page}`}
+                className="w-full h-64 object-cover mb-4 rounded"
+              />
+              <p>{page.content}</p>
+            </PageWithRef>
+          ))}
+          <PageCoverWithRef>see you</PageCoverWithRef>
+        </HTMLFlipBook>
+      ) : (
+        <p>지정된 ID의 페이지가 없습니다.</p>
+      )}
+    </div>
+  );
+};
+
+{
+  /* <HTMLFlipBook
         width={550}
         height={650}
         flippingTime={1000}
@@ -80,6 +141,7 @@ const Flipbook: React.FC = () => {
       <br></br>
     </div>
   );
-};
+}; */
+}
 
 export default Flipbook;
