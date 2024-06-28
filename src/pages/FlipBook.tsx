@@ -1,6 +1,7 @@
 import HTMLFlipBook from "react-pageflip";
 import React, { useState, useEffect, ForwardRefRenderFunction } from "react";
 import "src/App.css";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 
@@ -47,9 +48,10 @@ const PageWithRef = React.forwardRef(Page);
 const Flipbook: React.FC = () => {
   const location = useLocation();
   const [pages, setPages] = useState<PageData[]>([]);
-
-  const [inputText, setInputElement] = useState<string>("");
-  const [text, setText] = useState<string>("이게머냐구");
+  const reduxPages = useSelector((state: any) => state.story.pages);
+  const titlePage = reduxPages.find((page: any) => page.pageId === 1); // pageId가 1인 페이지 가져오기
+  const title = titlePage ? titlePage.title : ""; // 제목 가져오기
+  const coverImageUrl = titlePage ? titlePage.imageUrl : ""; // 표지 가져오기
 
   const story = location.state?.story;
   console.log("story:", story);
@@ -76,7 +78,7 @@ const Flipbook: React.FC = () => {
 
   return (
     <div
-      style={{ backgroundColor: "lightgray", height: "100vh", padding: "20px" }}
+      style={{ backgroundColor: "#E7E3E0", height: "100vh", padding: "60px" }}
     >
       {pages.length > 0 ? (
         <HTMLFlipBook
@@ -88,13 +90,22 @@ const Flipbook: React.FC = () => {
           className="album-web"
           showCover={true}
         >
-          <PageCoverWithRef>try</PageCoverWithRef>
+          <PageCoverWithRef>
+            <h2>{title}</h2>
+            {coverImageUrl && (
+              <img
+                src={coverImageUrl}
+                alt="Cover"
+                className="w-full h-full object-cover"
+              />
+            )}
+          </PageCoverWithRef>
           {pages.map((page, index) => (
             <PageWithRef number={page.page} key={index}>
               <img
                 src={page.image}
                 alt={`Page ${page.page}`}
-                className="w-full h-64 object-cover mb-4 rounded"
+                className="w-full h-72 object-cover mb-4"
               />
               <p>{page.content}</p>
             </PageWithRef>
@@ -107,41 +118,5 @@ const Flipbook: React.FC = () => {
     </div>
   );
 };
-
-{
-  /* <HTMLFlipBook
-        width={550}
-        height={650}
-        flippingTime={1000}
-        style={{ margin: "0 auto" }}
-        maxShadowOpacity={0.5}
-        className="flipbook"
-        showCover={true} // 표지 표시
-      >
-        <PageCoverWithRef>try</PageCoverWithRef>
-        <PageCoverWithRef> </PageCoverWithRef>
-        <PageWithRef number="1">
-          <hr></hr>
-          <p contentEditable="true">이게뭐양</p>
-        </PageWithRef>
-        <PageWithRef number="2">
-          <hr></hr>
-          <p>{text}</p>
-        </PageWithRef>
-        <PageWithRef number="3">
-          <hr></hr>
-        </PageWithRef>
-        <PageWithRef number="4">
-          <hr></hr>
-        </PageWithRef>
-        <PageCoverWithRef> </PageCoverWithRef>
-        <PageCoverWithRef>담에 봐유</PageCoverWithRef>
-      </HTMLFlipBook>
-      <br></br>
-      <br></br>
-    </div>
-  );
-}; */
-}
 
 export default Flipbook;
