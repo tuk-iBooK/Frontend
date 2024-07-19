@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { addPage, addUserChoice, setImage } from "../features/storySlice";
-
 import axios, { AxiosRequestConfig } from "axios";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
+import imageCompression from "browser-image-compression"; //이미지 압축
 
 const FirstResultPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const FirstResultPage: React.FC = () => {
     return state.story.pages.length > 0
       ? state.story.pages[state.story.pages.length - 1]
       : undefined; // null 대신 undefined 사용, 초기값 조정 필요시 조정
-  }); //pages 배열이 비어 있으면 undefined를 반환
+  });
 
   const [loading, setLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false); // 중복 호출을 방지하기 위한 상태
@@ -74,14 +74,70 @@ const FirstResultPage: React.FC = () => {
     console.log("Pages 업데이트됨:", pages);
   }, [pages]);
 
-  //결과 페이지로 이동 추후 수정
+  //결과 페이지로 이동 stortId 값 전달
   const handleViewCompletedBook = () => {
     navigate("/flipbook", { state: { story: story } });
+  };
+
+  //이미지 압축 함수 (이미지 로딩 시간을 줄이는 최적화 방식)
+  const compressImage = async (imageUrl: string): Promise<string> => {
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+
+      // Blob 타입 로깅
+      console.log("Blob type:", blob.type);
+
+      // Blob을 이미지로 변환
+      const imageBitmap = await createImageBitmap(blob);
+      const canvas = document.createElement("canvas");
+      canvas.width = imageBitmap.width;
+      canvas.height = imageBitmap.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("Failed to get canvas context");
+      }
+      ctx.drawImage(imageBitmap, 0, 0);
+
+      // Canvas 데이터를 Blob으로 변환
+      const canvasBlob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error("Failed to create Blob from canvas"));
+          }
+        }, "image/jpeg");
+      });
+
+      const file = new File([canvasBlob], "image.jpg", {
+        type: canvasBlob.type,
+        lastModified: Date.now(),
+      });
+
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+
+      const compressedFile = await imageCompression(file, options);
+      return URL.createObjectURL(compressedFile);
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      return imageUrl; // 압축 실패 시 원본 이미지 반환
+    }
   };
 
   const fetchData = async (story: number, config: AxiosRequestConfig) => {
     if (!config) return;
     setLoading(true);
+    console.time("fetchData");
+
     try {
       // API 요청 : 첫번째 이야기 생성
       const response = await axios.post(
@@ -100,7 +156,7 @@ const FirstResultPage: React.FC = () => {
           { story_id: story, content: parsedData.content },
           config
         );
-        console.log("이야기 저장 성공! :", saveStoryResponse);
+
         await createAndSaveImage(parsedData.pageId, parsedData.content);
       } else {
         console.error("API 요청 실패 :", response);
@@ -108,6 +164,7 @@ const FirstResultPage: React.FC = () => {
     } catch (error) {
       console.error("API 요청 중 오류 발생 :", error);
     } finally {
+      console.timeEnd("fetchData");
       setLoading(false);
     }
   };
@@ -121,11 +178,13 @@ const FirstResultPage: React.FC = () => {
 
   const createAndSaveImage = async (pageId: number, content: string) => {
     if (!config) return;
+
+    console.time(`createAndSaveImage-${pageId}`); //실행시간 측정 이미지 생성
     // 선택에 따른 이미지 생성 요청
+
     try {
       const imageResponse = await axios.post(
         "http://localhost:8000/api/story/register/chatgpt/image/",
-        // { story_id: story, query: pages[pages.length].content },
         { story_id: story, query: content },
         config
       );
@@ -133,15 +192,19 @@ const FirstResultPage: React.FC = () => {
 
       // 이미지 저장 요청
       if (imageResponse.status === 200 && imageResponse.data.image_url) {
-        dispatch(setImage({ pageId, imageUrl: imageResponse.data.image_url }));
-        console.log("리덕스에 저장된 url :", imageResponse.data.image_url);
+        // 이미지를 압축
+        const compressedImageUrl = await compressImage(
+          imageResponse.data.image_url
+        );
+        dispatch(setImage({ pageId, imageUrl: compressedImageUrl }));
+        console.log("리덕스에 저장된 url :", compressedImageUrl);
 
         const saveImageResponse = await axios.post(
           "http://localhost:8000/api/story/save_image/",
           {
             story_id: story,
             page_number: pageId,
-            image_url: imageResponse.data.image_url,
+            image_url: compressedImageUrl,
           },
           config
         );
@@ -151,6 +214,8 @@ const FirstResultPage: React.FC = () => {
       }
     } catch (error) {
       console.error("이미지 저장 중 오류 발생:", error);
+    } finally {
+      console.timeEnd(`createAndSaveImage-${pageId}`);
     }
   };
 
@@ -161,6 +226,9 @@ const FirstResultPage: React.FC = () => {
         addUserChoice({ pageId: currentPage?.pageId || 0, userChoice: choice })
       );
       setLoading(true);
+
+      console.time("handleChoice");
+
       try {
         // 다음 API 요청: 이야기 생성
         const updateResponse = await axios.post(
@@ -191,6 +259,7 @@ const FirstResultPage: React.FC = () => {
       } catch (error) {
         console.error("API 요청 중 오류가 발생했습니다:", error);
       } finally {
+        console.timeEnd("handleChoice");
         setLoading(false);
       }
     },
@@ -200,6 +269,7 @@ const FirstResultPage: React.FC = () => {
   const handleEditContent = async () => {
     if (!config || !isEditing) return;
     setLoading(true); // 처리 중 표시
+    console.time("handleEditContent");
     try {
       //수정된 내용 업데이트
       const updateResponse = await axios.put(
@@ -272,6 +342,7 @@ const FirstResultPage: React.FC = () => {
       alert("Error updating content");
     } finally {
       setLoading(false);
+      console.timeEnd("handleEditContent");
     }
   };
 

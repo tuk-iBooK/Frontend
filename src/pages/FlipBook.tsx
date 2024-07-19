@@ -105,7 +105,7 @@ const Flipbook: React.FC = () => {
               <img
                 src={page.image}
                 alt={`Page ${page.page}`}
-                className="w-full h-72 object-cover mb-4"
+                className="w-full h-64 object-cover mb-4"
               />
               <p>{page.content}</p>
             </PageWithRef>
