@@ -80,7 +80,10 @@ const FirstResultPage: React.FC = () => {
   };
 
   //이미지 압축 함수 (이미지 로딩 시간을 줄이는 최적화 방식)
-  const compressImage = async (imageUrl: string): Promise<string> => {
+  const compressImage = async (
+    imageUrl: string,
+    format: "image/jpeg" | "image/webp"
+  ): Promise<string> => {
     try {
       const response = await fetch(imageUrl);
       if (!response.ok) {
@@ -91,6 +94,7 @@ const FirstResultPage: React.FC = () => {
 
       // Blob 타입 로깅
       console.log("Blob type:", blob.type);
+      console.log("Original Blob size:", blob.size); // 원본 Blob 크기 출력
 
       // Blob을 이미지로 변환
       const imageBitmap = await createImageBitmap(blob);
@@ -103,7 +107,7 @@ const FirstResultPage: React.FC = () => {
       }
       ctx.drawImage(imageBitmap, 0, 0);
 
-      // Canvas 데이터를 Blob으로 변환
+      // Canvas 데이터를 JPEG 또는 WebP 형식의 Blob으로 변환
       const canvasBlob = await new Promise<Blob>((resolve, reject) => {
         canvas.toBlob((blob) => {
           if (blob) {
@@ -111,21 +115,27 @@ const FirstResultPage: React.FC = () => {
           } else {
             reject(new Error("Failed to create Blob from canvas"));
           }
-        }, "image/jpeg");
+        }, format);
       });
 
-      const file = new File([canvasBlob], "image.jpg", {
+      const file = new File([canvasBlob], `image.${format.split("/")[1]}`, {
         type: canvasBlob.type,
         lastModified: Date.now(),
       });
 
       const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 1920,
+        maxSizeMB: 0.5, // 더 작은 크기로 설정
+        maxWidthOrHeight: 1024, // 더 작은 크기로 설정
         useWebWorker: true,
       };
 
       const compressedFile = await imageCompression(file, options);
+      const compressedBlob = new Blob([compressedFile], {
+        type: compressedFile.type,
+      });
+
+      console.log("Compressed Blob size:", compressedBlob.size); // 압축된 Blob 크기 출력
+
       return URL.createObjectURL(compressedFile);
     } catch (error) {
       console.error("Error compressing image:", error);
@@ -194,7 +204,8 @@ const FirstResultPage: React.FC = () => {
       if (imageResponse.status === 200 && imageResponse.data.image_url) {
         // 이미지를 압축
         const compressedImageUrl = await compressImage(
-          imageResponse.data.image_url
+          imageResponse.data.image_url,
+          "image/webp"
         );
         dispatch(setImage({ pageId, imageUrl: compressedImageUrl }));
         console.log("리덕스에 저장된 url :", compressedImageUrl);
