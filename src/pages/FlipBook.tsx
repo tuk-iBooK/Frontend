@@ -22,13 +22,13 @@ const PageCover: ForwardRefRenderFunction<
   const [title, imageUrl] = React.Children.toArray(props.children);
   return (
     <div
-      className="relative w-full h-full overflow-hidden"
+      className="relative w-full h-full overflow-hidden shadow-2xl rounded-lg"
       ref={ref}
       data-density="hard"
     >
       {title && (
         //폰트 나중에 바꾸기
-        <h2 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl font-bold text-black text-center z-10">
+        <h2 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-black text-center z-10">
           {title}
         </h2>
       )}
@@ -48,7 +48,7 @@ const Page: ForwardRefRenderFunction<HTMLDivElement, PageProps> = (
   ref
 ) => {
   return (
-    <div className="page bg-white p-8" ref={ref}>
+    <div className="page bg-[#FDF9F6] p-8 shadow-2xl rounded-lg" ref={ref}>
       {/* <div
       className="page relative p-8"
       ref={ref}
@@ -110,7 +110,7 @@ const Flipbook: React.FC = () => {
     // <div
     //   style={{ backgroundColor: "#E7E3E0", height: "100vh", padding: "60px" }}
     // >
-    <div className="bg-gray-200 h-screen p-16">
+    <div className="bg-[#FAF0E6] h-screen p-16">
       {pages.length > 0 ? (
         <HTMLFlipBook
           width={550}

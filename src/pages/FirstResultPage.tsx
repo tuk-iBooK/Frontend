@@ -24,6 +24,7 @@ const FirstResultPage: React.FC = () => {
   const [config, setConfig] = useState<AxiosRequestConfig | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState("");
+  const [isEditingText, setIsEditingText] = useState(false);
 
   const toggleEditModal = () => setIsEditing(!isEditing);
 
@@ -423,24 +424,51 @@ const FirstResultPage: React.FC = () => {
         )}
         {isEditing && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="w-1/2 h-1/2 bg-white p-8 rounded-lg shadow-xl">
+            <div className="w-1/2 h-auto bg-white p-8 rounded-lg shadow-2xl">
+              <h2 className="text-xl mb-4 font-bold">내용 수정하기</h2>
+              <button
+                className="w-full py-4 mt-4 mb-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+                onClick={() => {
+                  // 그림만 수정하기 기능 추가
+                  console.log("그림만 수정하기 클릭됨");
+                }}
+              >
+                그림만 수정하기
+              </button>
+              <button
+                className="w-full py-4 mb-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+                onClick={() => {
+                  // "글과 그림 수정하기" 버튼 클릭 시 새 모달창 열기
+                  setIsEditing(false);
+                  setIsEditingText(true); // 새로운 상태 설정
+                }}
+              >
+                글과 그림 모두 수정하기
+              </button>
+            </div>
+          </div>
+        )}
+
+        {isEditingText && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="w-1/2 h-auto bg-white p-8 rounded-lg shadow-2xl">
               <h2 className="text-xl mb-4 font-bold">내용 수정하기</h2>
               <textarea
                 value={newContent}
                 onChange={(e) => setNewContent(e.target.value)}
-                className="textarea w-full h-40 p-4 border border-gray-300 rounded" // 스타일 업데이트
+                className="textarea w-full h-40 p-4 border border-gray-300 rounded-lg"
                 placeholder="수정할 내용을 입력하세요"
               />
               <div className="flex justify-between mt-12">
                 <button
-                  onClick={toggleEditModal}
-                  className="bg-gray-300 text-white p-2 rounded flex-grow mr-4"
+                  onClick={() => setIsEditingText(false)}
+                  className="bg-gray-300 text-white p-2 rounded-lg flex-grow mr-4"
                 >
                   닫기
                 </button>
                 <button
                   onClick={handleEditContent}
-                  className="bg-gray-300 text-white p-2 rounded flex-grow ml-4"
+                  className="bg-gray-300 text-white p-2 rounded-lg flex-grow ml-4"
                 >
                   완료
                 </button>
