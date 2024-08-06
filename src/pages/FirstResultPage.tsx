@@ -1,6 +1,11 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addPage, addUserChoice, setImage } from "../features/storySlice";
+import {
+  addPage,
+  addUserChoice,
+  setImage,
+  updatePage,
+} from "../features/storySlice";
 import axios, { AxiosRequestConfig } from "axios";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -278,8 +283,8 @@ const FirstResultPage: React.FC = () => {
     [dispatch, story, currentPage, config]
   );
 
-  const handleEditContent = async () => {
-    if (!config || !isEditing) return;
+  const handleEditContent = async (updateImage: boolean) => {
+    if (!config || !currentPage) return;
     setLoading(true); // 처리 중 표시
     console.time("handleEditContent");
     try {
@@ -297,54 +302,20 @@ const FirstResultPage: React.FC = () => {
       if (updateResponse.status === 200) {
         console.log("내용이 성공적으로 수정되었습니다! :", updateResponse);
 
-        // // 새로운 선택지 요청
-        // const newChoicesResponse = await axios.post(
-        //   "http://localhost:8000/api/story/update/",
-        //   { story_id: story },
-        //   config
-        // );
-        // console.log("새로운 선택지 요청 성공 :", newChoicesResponse);
-
+        // 페이지 내용 업데이트
         dispatch(
-          addPage({
+          updatePage({
+            ...currentPage,
             content: newContent,
           })
         );
 
-        // 이미지 생성 및 저장 요청
-        const imageResponse = await axios.post(
-          "http://localhost:8000/api/story/register/chatgpt/image/",
-          { story_id: story, query: newContent },
-          config
-        );
-
-        if (imageResponse.status === 200 && imageResponse.data.image_url) {
-          console.log("이미지 생성 성공 :", imageResponse);
-
-          const imageUrlWithTimestamp = `${imageResponse.data.image_url}?timestamp=${new Date().getTime()}`;
-          dispatch(
-            setImage({
-              pageId: currentPage?.pageId,
-              imageUrl: imageUrlWithTimestamp,
-            })
-          );
-
-          // 이미지 저장 요청
-          await axios.post(
-            "http://localhost:8000/api/story/save_image/",
-            {
-              story_id: story,
-              page_number: currentPage?.pageId,
-              image_url: imageResponse.data.image_url,
-            },
-            config
-          );
-          console.log("이미지 저장 성공!");
-        } else {
-          console.error("이미지 생성 실패:", imageResponse);
+        // 글과 그림 모두 수정하기의 경우, 이미지 생성 및 저장 요청
+        if (updateImage) {
+          await createAndSaveImage(currentPage.pageId, newContent);
         }
 
-        setIsEditing(false);
+        setIsEditingText(false); // 모달창 닫기
         setNewContent("");
       } else {
         console.error("이야기 업데이트 요청 실패 :", updateResponse);
@@ -449,7 +420,16 @@ const FirstResultPage: React.FC = () => {
               <button
                 className="w-full py-4 mb-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
                 onClick={() => {
-                  // "글과 그림 수정하기" 버튼 클릭 시 새 모달창 열기
+                  setIsEditing(false);
+                  setIsEditingText(true); // 새로운 상태 설정
+                  setNewContent(currentPage?.content || ""); // 기존 내용을 입력창에 설정
+                }}
+              >
+                글만 수정하기
+              </button>
+              <button
+                className="w-full py-4 mb-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+                onClick={() => {
                   setIsEditing(false);
                   setIsEditingText(true); // 새로운 상태 설정
                   setNewContent(currentPage?.content || ""); // 기존 내용을 입력창에 설정
@@ -479,7 +459,7 @@ const FirstResultPage: React.FC = () => {
                   닫기
                 </button>
                 <button
-                  onClick={handleEditContent}
+                  onClick={() => handleEditContent(false)}
                   className="bg-gray-300 text-white p-2 rounded-lg flex-grow ml-4"
                 >
                   완료
