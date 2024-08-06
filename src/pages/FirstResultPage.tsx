@@ -452,6 +452,7 @@ const FirstResultPage: React.FC = () => {
                   // "글과 그림 수정하기" 버튼 클릭 시 새 모달창 열기
                   setIsEditing(false);
                   setIsEditingText(true); // 새로운 상태 설정
+                  setNewContent(currentPage?.content || ""); // 기존 내용을 입력창에 설정
                 }}
               >
                 글과 그림 모두 수정하기
