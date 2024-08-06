@@ -89,8 +89,8 @@ const MainPage: React.FC = () => {
         className="flex bg-[#FFF0A3] items-center justify-center"
         style={{ height: "400px", minHeight: "400px" }}
       > */}
-      <div className="flex bg-[#FFF0A3] items-center justify-center">
-        <div className="flex-1 flex flex-col ml-36 justify-start items-start p-4 ">
+      <div className="flex h-screen bg-[#FFF0A3] items-center justify-center">
+        <div className="flex-1 flex flex-col ml-36 justify-start items-start p-12 pt-16">
           <p className="text-5xl mt-4 mb-4 font-bold text-black">
             나만의 그림 동화책
           </p>

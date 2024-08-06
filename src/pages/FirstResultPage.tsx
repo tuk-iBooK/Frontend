@@ -1,10 +1,15 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addPage, addUserChoice, setImage } from "../features/storySlice";
-
+import {
+  addPage,
+  addUserChoice,
+  setImage,
+  updatePage,
+} from "../features/storySlice";
 import axios, { AxiosRequestConfig } from "axios";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "../components/LoadingSpinner";
+import imageCompression from "browser-image-compression"; //이미지 압축
 
 const FirstResultPage: React.FC = () => {
   const dispatch = useDispatch();
@@ -17,13 +22,14 @@ const FirstResultPage: React.FC = () => {
     return state.story.pages.length > 0
       ? state.story.pages[state.story.pages.length - 1]
       : undefined; // null 대신 undefined 사용, 초기값 조정 필요시 조정
-  }); //pages 배열이 비어 있으면 undefined를 반환
+  });
 
   const [loading, setLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false); // 중복 호출을 방지하기 위한 상태
   const [config, setConfig] = useState<AxiosRequestConfig | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [newContent, setNewContent] = useState("");
+  const [isEditingText, setIsEditingText] = useState(false);
 
   const toggleEditModal = () => setIsEditing(!isEditing);
 
@@ -74,14 +80,80 @@ const FirstResultPage: React.FC = () => {
     console.log("Pages 업데이트됨:", pages);
   }, [pages]);
 
-  //결과 페이지로 이동 추후 수정
+  //결과 페이지로 이동 stortId 값 전달
   const handleViewCompletedBook = () => {
     navigate("/flipbook", { state: { story: story } });
+  };
+
+  //이미지 압축 함수 (이미지 로딩 시간을 줄이는 최적화 방식)
+  const compressImage = async (
+    imageUrl: string,
+    format: "image/jpeg" | "image/webp"
+  ): Promise<string> => {
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch image: ${response.statusText}`);
+      }
+
+      const blob = await response.blob();
+
+      // Blob 타입 로깅
+      console.log("Blob type:", blob.type);
+      console.log("Original Blob size:", blob.size); // 원본 Blob 크기 출력
+
+      // Blob을 이미지로 변환
+      const imageBitmap = await createImageBitmap(blob);
+      const canvas = document.createElement("canvas");
+      canvas.width = imageBitmap.width;
+      canvas.height = imageBitmap.height;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("Failed to get canvas context");
+      }
+      ctx.drawImage(imageBitmap, 0, 0);
+
+      // Canvas 데이터를 JPEG 또는 WebP 형식의 Blob으로 변환
+      const canvasBlob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error("Failed to create Blob from canvas"));
+          }
+        }, format);
+      });
+
+      const file = new File([canvasBlob], `image.${format.split("/")[1]}`, {
+        type: canvasBlob.type,
+        lastModified: Date.now(),
+      });
+
+      const options = {
+        maxSizeMB: 0.5, // 더 작은 크기로 설정
+        maxWidthOrHeight: 1024, // 더 작은 크기로 설정
+        useWebWorker: true,
+      };
+
+      const compressedFile = await imageCompression(file, options);
+      const compressedBlob = new Blob([compressedFile], {
+        type: compressedFile.type,
+      });
+
+      console.log("Compressed Blob size:", compressedBlob.size); // 압축된 Blob 크기 출력
+
+      return URL.createObjectURL(compressedFile);
+    } catch (error) {
+      console.error("Error compressing image:", error);
+      return imageUrl; // 압축 실패 시 원본 이미지 반환
+    }
   };
 
   const fetchData = async (story: number, config: AxiosRequestConfig) => {
     if (!config) return;
     setLoading(true);
+    console.time("fetchData");
+
     try {
       // API 요청 : 첫번째 이야기 생성
       const response = await axios.post(
@@ -100,7 +172,7 @@ const FirstResultPage: React.FC = () => {
           { story_id: story, content: parsedData.content },
           config
         );
-        console.log("이야기 저장 성공! :", saveStoryResponse);
+
         await createAndSaveImage(parsedData.pageId, parsedData.content);
       } else {
         console.error("API 요청 실패 :", response);
@@ -108,6 +180,7 @@ const FirstResultPage: React.FC = () => {
     } catch (error) {
       console.error("API 요청 중 오류 발생 :", error);
     } finally {
+      console.timeEnd("fetchData");
       setLoading(false);
     }
   };
@@ -121,11 +194,13 @@ const FirstResultPage: React.FC = () => {
 
   const createAndSaveImage = async (pageId: number, content: string) => {
     if (!config) return;
+
+    console.time(`createAndSaveImage-${pageId}`); //실행시간 측정 이미지 생성
     // 선택에 따른 이미지 생성 요청
+
     try {
       const imageResponse = await axios.post(
         "http://localhost:8000/api/story/register/chatgpt/image/",
-        // { story_id: story, query: pages[pages.length].content },
         { story_id: story, query: content },
         config
       );
@@ -133,15 +208,20 @@ const FirstResultPage: React.FC = () => {
 
       // 이미지 저장 요청
       if (imageResponse.status === 200 && imageResponse.data.image_url) {
-        dispatch(setImage({ pageId, imageUrl: imageResponse.data.image_url }));
-        console.log("리덕스에 저장된 url :", imageResponse.data.image_url);
+        // 이미지를 압축
+        const compressedImageUrl = await compressImage(
+          imageResponse.data.image_url,
+          "image/webp"
+        );
+        dispatch(setImage({ pageId, imageUrl: compressedImageUrl }));
+        console.log("리덕스에 저장된 url :", compressedImageUrl);
 
         const saveImageResponse = await axios.post(
           "http://localhost:8000/api/story/save_image/",
           {
             story_id: story,
             page_number: pageId,
-            image_url: imageResponse.data.image_url,
+            image_url: compressedImageUrl,
           },
           config
         );
@@ -151,6 +231,8 @@ const FirstResultPage: React.FC = () => {
       }
     } catch (error) {
       console.error("이미지 저장 중 오류 발생:", error);
+    } finally {
+      console.timeEnd(`createAndSaveImage-${pageId}`);
     }
   };
 
@@ -161,6 +243,9 @@ const FirstResultPage: React.FC = () => {
         addUserChoice({ pageId: currentPage?.pageId || 0, userChoice: choice })
       );
       setLoading(true);
+
+      console.time("handleChoice");
+
       try {
         // 다음 API 요청: 이야기 생성
         const updateResponse = await axios.post(
@@ -191,15 +276,17 @@ const FirstResultPage: React.FC = () => {
       } catch (error) {
         console.error("API 요청 중 오류가 발생했습니다:", error);
       } finally {
+        console.timeEnd("handleChoice");
         setLoading(false);
       }
     },
     [dispatch, story, currentPage, config]
   );
 
-  const handleEditContent = async () => {
-    if (!config || !isEditing) return;
+  const handleEditContent = async (updateImage: boolean) => {
+    if (!config || !currentPage) return;
     setLoading(true); // 처리 중 표시
+    console.time("handleEditContent");
     try {
       //수정된 내용 업데이트
       const updateResponse = await axios.put(
@@ -215,54 +302,20 @@ const FirstResultPage: React.FC = () => {
       if (updateResponse.status === 200) {
         console.log("내용이 성공적으로 수정되었습니다! :", updateResponse);
 
-        // // 새로운 선택지 요청
-        // const newChoicesResponse = await axios.post(
-        //   "http://localhost:8000/api/story/update/",
-        //   { story_id: story },
-        //   config
-        // );
-        // console.log("새로운 선택지 요청 성공 :", newChoicesResponse);
-
+        // 페이지 내용 업데이트
         dispatch(
-          addPage({
+          updatePage({
+            ...currentPage,
             content: newContent,
           })
         );
 
-        // 이미지 생성 및 저장 요청
-        const imageResponse = await axios.post(
-          "http://localhost:8000/api/story/register/chatgpt/image/",
-          { story_id: story, query: newContent },
-          config
-        );
-
-        if (imageResponse.status === 200 && imageResponse.data.image_url) {
-          console.log("이미지 생성 성공 :", imageResponse);
-
-          const imageUrlWithTimestamp = `${imageResponse.data.image_url}?timestamp=${new Date().getTime()}`;
-          dispatch(
-            setImage({
-              pageId: currentPage?.pageId,
-              imageUrl: imageUrlWithTimestamp,
-            })
-          );
-
-          // 이미지 저장 요청
-          await axios.post(
-            "http://localhost:8000/api/story/save_image/",
-            {
-              story_id: story,
-              page_number: currentPage?.pageId,
-              image_url: imageResponse.data.image_url,
-            },
-            config
-          );
-          console.log("이미지 저장 성공!");
-        } else {
-          console.error("이미지 생성 실패:", imageResponse);
+        // 글과 그림 모두 수정하기의 경우, 이미지 생성 및 저장 요청
+        if (updateImage) {
+          await createAndSaveImage(currentPage.pageId, newContent);
         }
 
-        setIsEditing(false);
+        setIsEditingText(false); // 모달창 닫기
         setNewContent("");
       } else {
         console.error("이야기 업데이트 요청 실패 :", updateResponse);
@@ -272,6 +325,7 @@ const FirstResultPage: React.FC = () => {
       alert("Error updating content");
     } finally {
       setLoading(false);
+      console.timeEnd("handleEditContent");
     }
   };
 
@@ -341,24 +395,72 @@ const FirstResultPage: React.FC = () => {
         )}
         {isEditing && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="w-1/2 h-1/2 bg-white p-8 rounded-lg shadow-xl">
+            <div className="w-1/2 h-auto bg-white p-8 rounded-lg shadow-2xl">
+              <h2 className="text-xl mb-4 font-bold">내용 수정하기</h2>
+              <button
+                className="w-full py-4 mt-4 mb-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+                onClick={async () => {
+                  if (!config || !currentPage) return;
+                  setLoading(true);
+                  setIsEditing(false);
+                  try {
+                    await createAndSaveImage(
+                      currentPage.pageId,
+                      currentPage.content
+                    );
+                  } catch (error) {
+                    console.error("Error editing image:", error);
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+              >
+                그림만 수정하기
+              </button>
+              <button
+                className="w-full py-4 mb-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+                onClick={() => {
+                  setIsEditing(false);
+                  setIsEditingText(true); // 새로운 상태 설정
+                  setNewContent(currentPage?.content || ""); // 기존 내용을 입력창에 설정
+                }}
+              >
+                글만 수정하기
+              </button>
+              <button
+                className="w-full py-4 mb-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+                onClick={() => {
+                  setIsEditing(false);
+                  setIsEditingText(true); // 새로운 상태 설정
+                  setNewContent(currentPage?.content || ""); // 기존 내용을 입력창에 설정
+                }}
+              >
+                글과 그림 모두 수정하기
+              </button>
+            </div>
+          </div>
+        )}
+
+        {isEditingText && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="w-1/2 h-auto bg-white p-8 rounded-lg shadow-2xl">
               <h2 className="text-xl mb-4 font-bold">내용 수정하기</h2>
               <textarea
                 value={newContent}
                 onChange={(e) => setNewContent(e.target.value)}
-                className="textarea w-full h-40 p-4 border border-gray-300 rounded" // 스타일 업데이트
+                className="textarea w-full h-40 p-4 border border-gray-300 rounded-lg"
                 placeholder="수정할 내용을 입력하세요"
               />
               <div className="flex justify-between mt-12">
                 <button
-                  onClick={toggleEditModal}
-                  className="bg-gray-300 text-white p-2 rounded flex-grow mr-4"
+                  onClick={() => setIsEditingText(false)}
+                  className="bg-gray-300 text-white p-2 rounded-lg flex-grow mr-4"
                 >
                   닫기
                 </button>
                 <button
-                  onClick={handleEditContent}
-                  className="bg-gray-300 text-white p-2 rounded flex-grow ml-4"
+                  onClick={() => handleEditContent(false)}
+                  className="bg-gray-300 text-white p-2 rounded-lg flex-grow ml-4"
                 >
                   완료
                 </button>

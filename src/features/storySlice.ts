@@ -44,7 +44,8 @@ export const storySlice = createSlice({
         (page) => page.pageId === action.payload.pageId
       );
       if (index !== -1) {
-        state.pages[index] = { ...state.pages[index], ...action.payload };
+        state.pages[index] = action.payload;
+        // state.pages[index] = { ...state.pages[index], ...action.payload };
       }
     },
 
@@ -53,11 +54,9 @@ export const storySlice = createSlice({
         (choice) => choice.pageId === action.payload.pageId
       );
       if (existingChoiceIndex !== -1) {
-        // 이미 해당 페이지에 대한 선택이 있다면 업데이트
         state.choices[existingChoiceIndex].userChoice =
           action.payload.userChoice;
       } else {
-        // 새로운 선택 추가
         state.choices.push(action.payload);
       }
     },
