@@ -428,9 +428,20 @@ const FirstResultPage: React.FC = () => {
               <h2 className="text-xl mb-4 font-bold">내용 수정하기</h2>
               <button
                 className="w-full py-4 mt-4 mb-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
-                onClick={() => {
-                  // 그림만 수정하기 기능 추가
-                  console.log("그림만 수정하기 클릭됨");
+                onClick={async () => {
+                  if (!config || !currentPage) return;
+                  setLoading(true);
+                  setIsEditing(false);
+                  try {
+                    await createAndSaveImage(
+                      currentPage.pageId,
+                      currentPage.content
+                    );
+                  } catch (error) {
+                    console.error("Error editing image:", error);
+                  } finally {
+                    setLoading(false);
+                  }
                 }}
               >
                 그림만 수정하기
