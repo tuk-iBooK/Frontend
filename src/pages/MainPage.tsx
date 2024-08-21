@@ -95,7 +95,7 @@ const MainPage: React.FC = () => {
             나만의 그림 동화책
           </p>
           <div className="flex w-full justify-end items-end">
-            <p className="text-7xl font-bold text-[#FFD600] mr-0 mb-6">
+            <p className="text-6xl font-bold text-[#FFD600] mr-0 mb-6">
               I-BOOK
             </p>
           </div>

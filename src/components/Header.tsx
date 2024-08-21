@@ -59,7 +59,7 @@ const Header: React.FC = () => {
         )}
       </div>
       <div className="flex justify-between items-center p-2 mt-2">
-        <Link to="/" className="text-5xl ml-12 font-bold text-[#FFD600]">
+        <Link to="/" className="text-4xl ml-12 font-bold text-[#FFD600]">
           I-Book
         </Link>
         <input

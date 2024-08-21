@@ -15,6 +15,8 @@ import SummarySettingPage from "./pages/SummarySettingPage";
 import FirstResultPage from "./pages/FirstResultPage";
 import ResultPage from "./pages/ResultPage";
 import FlipBook from "./pages/FlipBook";
+import Profile from "./pages/ProfilePage";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   return (
@@ -34,6 +36,7 @@ function App() {
             <Route path="/firstresult" element={<FirstResultPage />} />
             <Route path="/result" element={<ResultPage />} />
             <Route path="/flipbook" element={<FlipBook />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Routes>
         </div>
       </BrowserRouter>
