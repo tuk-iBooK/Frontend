@@ -3,6 +3,12 @@ import axios from "axios";
 import userProfileIcon from "src/assets/public/user.png";
 import manIcon from "src/assets/public/man.png";
 import womanIcon from "src/assets/public/woman.png";
+import image1 from "../assets/public/01.png";
+import image2 from "../assets/public/02.png";
+import image3 from "../assets/public/03.png";
+import image4 from "../assets/public/04.png";
+import image5 from "../assets/public/05.png";
+import image6 from "../assets/public/06.png";
 
 interface UserProfile {
   user_nickname: string;
@@ -61,6 +67,14 @@ const ProfilePage: React.FC = () => {
 
     fetchUserProfile();
   }, [token]);
+
+  const handleClick = (
+    event: React.MouseEvent<HTMLImageElement>,
+    imageTitle: string
+  ) => {
+    console.log(`${imageTitle} 클릭됨`);
+    // 여기에 추가적인 클릭 동작을 정의할 수 있습니다.
+  };
 
   // 프로필 생성 핸들러
   const handleProfileSubmit = async (e: React.FormEvent) => {
@@ -182,12 +196,13 @@ const ProfilePage: React.FC = () => {
 
   // 프로필이 존재하면 조회 화면을 렌더링
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white p-4">
-      <div className="bg-[#FFF8D6] rounded-3xl pt-12 pb-12 w-3/4 flex items-center justify-center">
+    <div className="flex flex-col items-center min-h-screen bg-white p-4">
+      {/* 프로필 영역 */}
+      <div className="bg-[#FFF8D6] rounded-3xl p-8 w-3/4 flex items-center justify-center mb-12 mt-12">
         <div className="flex flex-col items-center">
           <div className="w-56 h-56 rounded-full border-4 bg-white overflow-hidden flex items-center justify-center">
             <img
-              src={userProfile?.gender === "male" ? manIcon : womanIcon}
+              src={userProfile.gender === "male" ? manIcon : womanIcon}
               alt="Profile Icon"
               className="w-36 h-36 object-contain"
             />
@@ -199,14 +214,89 @@ const ProfilePage: React.FC = () => {
             <h1 className="text-5xl font-bold text-black text-center">
               {userProfile.user_nickname}
             </h1>
-          </div>
-          <div className="flex justify-end pr-24">
-            <span className="text-md text-gray-500 mt-2">
+            <span className="text-md text-gray-500 ml-4 mt-2">
               {userProfile.age} 살
             </span>
           </div>
           <div className="mt-12">
             <p className="text-xl text-center">{userProfile.description}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-4/5 border-t border-gray-300 mb-8"></div>
+
+      {/* 작품들 영역 */}
+      <div className="w-3/4">
+        <div className="flex p-4 text-xl font-bold">나의 작품들</div>
+        <div className="grid grid-cols-3 gap-8 overflow-y-auto max-h-[500px] p-4">
+          {/* 작품 아이템들 */}
+          <div className="flex-shrink-0 w-60">
+            <img
+              src={image1}
+              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
+              onClick={(event) => handleClick(event, "호기심 많은 소녀")}
+            />
+            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
+              호기심 많은 소녀
+            </p>
+          </div>
+
+          <div className="flex-shrink-0 w-60">
+            <img
+              src={image2}
+              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
+              onClick={(event) => handleClick(event, "끝없는 비밀의 길")}
+            />
+            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
+              끝없는 비밀의 길
+            </p>
+          </div>
+
+          <div className="flex-shrink-0 w-60">
+            <img
+              src={image3}
+              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
+              onClick={(event) => handleClick(event, "무서운 곰과 친구하기")}
+            />
+            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
+              무서운 곰과 친구하기
+            </p>
+          </div>
+
+          <div className="flex-shrink-0 w-60">
+            <img
+              src={image4}
+              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
+              onClick={(event) =>
+                handleClick(event, "신비로운 숲 속 비밀의 장소")
+              }
+            />
+            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
+              신비로운 숲 속 비밀의 장소
+            </p>
+          </div>
+
+          <div className="flex-shrink-0 w-60">
+            <img
+              src={image5}
+              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
+              onClick={(event) => handleClick(event, "요정의 비밀")}
+            />
+            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
+              요정의 비밀
+            </p>
+          </div>
+
+          <div className="flex-shrink-0 w-60">
+            <img
+              src={image6}
+              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
+              onClick={(event) => handleClick(event, "해적선의 보물을 찾아서")}
+            />
+            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
+              해적선의 보물을 찾아서
+            </p>
           </div>
         </div>
       </div>
