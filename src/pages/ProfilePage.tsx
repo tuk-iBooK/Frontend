@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import userProfilePicture from "src/assets/public/user.png";
+import userProfileIcon from "src/assets/public/user.png";
+import manIcon from "src/assets/public/man.png";
+import womanIcon from "src/assets/public/woman.png";
 
 interface UserProfile {
   user_nickname: string;
@@ -101,7 +103,7 @@ const ProfilePage: React.FC = () => {
           <div className="flex flex-col items-center">
             <div className="w-56 h-56 rounded-full bg-[#EBEBEB] border-gray-500 overflow-hidden flex items-center justify-center">
               <img
-                src={userProfilePicture}
+                src={userProfileIcon}
                 alt="Profile"
                 className="w-36 h-36 ml-6 object-contain"
               />
@@ -182,45 +184,29 @@ const ProfilePage: React.FC = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white p-4">
       <div className="bg-[#FFF8D6] rounded-3xl pt-12 pb-12 w-3/4 flex items-center justify-center">
-        {/* 프로필 조회 폼 */}
         <div className="flex flex-col items-center">
-          <div className="w-56 h-56 rounded-full bg-[#EBEBEB] border-gray-500 overflow-hidden flex items-center justify-center">
+          <div className="w-56 h-56 rounded-full border-4 bg-white overflow-hidden flex items-center justify-center">
             <img
-              src={userProfile.profilePicture || "/default-profile.png"}
-              alt="Profile"
+              src={userProfile?.gender === "male" ? manIcon : womanIcon}
+              alt="Profile Icon"
               className="w-36 h-36 object-contain"
             />
           </div>
         </div>
-        <div className="h-96 border-l-2 border-gray-300 ml-16 mr-16"></div>
+        <div className="h-64 border-l-2 border-gray-300 ml-16 mr-16"></div>
         <div className="items-center w-96 rounded-lg">
-          {/* 사용자 닉네임 */}
-          <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
-            {userProfile.user_nickname}
-          </h1>
-
-          {/* 사용자 나이 */}
-          <div className="mb-6">
-            <label className="block text-md font-bold mb-2 text-center">
-              나이: {userProfile.age} 살
-            </label>
+          <div className="flex justify-center items-center">
+            <h1 className="text-5xl font-bold text-black text-center">
+              {userProfile.user_nickname}
+            </h1>
           </div>
-
-          {/* 사용자 성별 */}
-          <div className="mb-6">
-            <label className="block text-md font-bold mb-2 text-center">
-              성별: {userProfile.gender === "male" ? "남성" : "여성"}
-            </label>
+          <div className="flex justify-end pr-24">
+            <span className="text-md text-gray-500 mt-2">
+              {userProfile.age} 살
+            </span>
           </div>
-
-          {/* 사용자 설명 */}
-          <div className="mb-6">
-            <label className="block text-md font-bold mb-2 text-center">
-              한 줄 소개
-            </label>
-            <p className="text-gray-600 text-center">
-              {userProfile.description}
-            </p>
+          <div className="mt-12">
+            <p className="text-xl text-center">{userProfile.description}</p>
           </div>
         </div>
       </div>
