@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import userProfilePicture from "src/assets/public/user.png";
 
-// 인터페이스 정의
 interface UserProfile {
   user_nickname: string;
   age: number;
@@ -14,9 +14,6 @@ const ProfilePage: React.FC = () => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // 프로필 생성용 상태
-  const [nickname, setNickname] = useState("");
   const [age, setAge] = useState<number | null>(null);
   const [gender, setGender] = useState("male");
   const [description, setDescription] = useState("");
@@ -51,7 +48,6 @@ const ProfilePage: React.FC = () => {
             error.response?.status === 500 ||
             error.response?.status === 404
           ) {
-            // 프로필이 없을 경우 (500 또는 404 에러 처리)
             setUserProfile(null); // 프로필이 없으면 null로 설정하여 프로필 생성 화면을 보여줌
           } else {
             setError("프로필을 불러오는 중 오류가 발생했습니다.");
@@ -78,7 +74,7 @@ const ProfilePage: React.FC = () => {
     try {
       const response = await axios.post(
         "http://localhost:8000/api/user/profile/",
-        { user_nickname: nickname, age, gender, description },
+        { age, gender, description },
         config
       );
 
@@ -89,12 +85,10 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  // 로딩 중일 때
   if (loading) {
     return <div>로딩 중...</div>;
   }
 
-  // 에러 발생 시 처리
   if (error) {
     return <div>{error}</div>;
   }
@@ -102,70 +96,83 @@ const ProfilePage: React.FC = () => {
   // 프로필이 존재하지 않으면 프로필 생성 폼을 렌더링
   if (!userProfile) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-          <h2 className="text-2xl font-bold mb-4 text-center">프로필 생성</h2>
-          <form onSubmit={handleProfileSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                닉네임
-              </label>
-              <input
-                type="text"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="닉네임을 입력하세요"
-                required
+      <div className="flex  items-center justify-center min-h-screen bg-white p-4">
+        <div className="bg-[#FFF8D6] rounded-3xl pt-12 pb-12 w-3/4 flex items-center justify-center">
+          <div className="flex flex-col items-center">
+            <div className="w-56 h-56 rounded-full bg-[#EBEBEB] border-gray-500 overflow-hidden flex items-center justify-center">
+              <img
+                src={userProfilePicture}
+                alt="Profile"
+                className="w-36 h-36 ml-6 object-contain"
               />
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                나이
-              </label>
-              <input
-                type="number"
-                value={age || ""}
-                onChange={(e) => setAge(Number(e.target.value))}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="나이를 입력하세요"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                성별
-              </label>
-              <div className="relative">
+          </div>
+          <div className="h-96 border-l-2 border-gray-300 ml-16 mr-16"></div>
+          <div className="items-center w-96 rounded-lg">
+            <form onSubmit={handleProfileSubmit}>
+              <div className="mb-6">
+                <label className="block text-md font-bold mb-2">
+                  나이를 설정하세요
+                </label>
                 <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  className="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+                  value={age || ""}
+                  onChange={(e) => setAge(Number(e.target.value))}
+                  className="block w-full bg-white border border-gray-300 rounded-lg shadow-sm py-2 px-3 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="male">남성</option>
-                  <option value="female">여성</option>
+                  {Array.from({ length: 100 }, (_, i) => i + 1).map((num) => (
+                    <option key={num} value={num}>
+                      {num} 살
+                    </option>
+                  ))}
                 </select>
               </div>
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 text-sm font-bold mb-2">
-                설명
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                placeholder="자신을 설명해주세요"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 w-full"
-            >
-              프로필 생성
-            </button>
-          </form>
+              <div className="mb-6">
+                <label className="block text-md font-bold mb-2">성별</label>
+                <div className="flex items-center justify-center">
+                  <button
+                    type="button"
+                    onClick={() => setGender("male")}
+                    className={`px-16 py-2 rounded-tl-full rounded-bl-full text-black ${
+                      gender === "male"
+                        ? "bg-[#FFF0A3] text-black font-bold"
+                        : "bg-[#EBEBEB] hover:bg-[#FFFAE1]"
+                    }`}
+                  >
+                    남자
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGender("female")}
+                    className={`px-16 py-2 rounded-tr-full rounded-br-full text-black  ${
+                      gender === "female"
+                        ? "bg-[#FFF0A3] text-black font-bold"
+                        : "bg-[#EBEBEB] hover:bg-[#FFFAE1]"
+                    }`}
+                  >
+                    여자
+                  </button>
+                </div>
+              </div>
+              <div className="mb-6">
+                <label className="block text-md font-bold mb-2">
+                  한 줄 소개를 입력하세요
+                </label>
+                <textarea
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  placeholder="자신을 설명해주세요"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                className="mt-6 py-3 w-full font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+              >
+                프로필 생성하기
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     );
@@ -173,37 +180,49 @@ const ProfilePage: React.FC = () => {
 
   // 프로필이 존재하면 조회 화면을 렌더링
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-sm text-center">
-        {/* 프로필 사진 */}
-        <div className="w-32 h-32 rounded-full overflow-hidden mx-auto mb-4">
-          <img
-            src={userProfile.profilePicture || "/default-profile.png"}
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
+    <div className="flex items-center justify-center min-h-screen bg-white p-4">
+      <div className="bg-[#FFF8D6] rounded-3xl pt-12 pb-12 w-3/4 flex items-center justify-center">
+        {/* 프로필 조회 폼 */}
+        <div className="flex flex-col items-center">
+          <div className="w-56 h-56 rounded-full bg-[#EBEBEB] border-gray-500 overflow-hidden flex items-center justify-center">
+            <img
+              src={userProfile.profilePicture || "/default-profile.png"}
+              alt="Profile"
+              className="w-36 h-36 object-contain"
+            />
+          </div>
         </div>
+        <div className="h-96 border-l-2 border-gray-300 ml-16 mr-16"></div>
+        <div className="items-center w-96 rounded-lg">
+          {/* 사용자 닉네임 */}
+          <h1 className="text-2xl font-bold text-gray-800 mb-6 text-center">
+            {userProfile.user_nickname}
+          </h1>
 
-        {/* 사용자 닉네임 */}
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">
-          {userProfile.user_nickname}
-        </h1>
+          {/* 사용자 나이 */}
+          <div className="mb-6">
+            <label className="block text-md font-bold mb-2 text-center">
+              나이: {userProfile.age} 살
+            </label>
+          </div>
 
-        {/* 사용자 나이 */}
-        <p className="text-gray-600">나이: {userProfile.age}</p>
+          {/* 사용자 성별 */}
+          <div className="mb-6">
+            <label className="block text-md font-bold mb-2 text-center">
+              성별: {userProfile.gender === "male" ? "남성" : "여성"}
+            </label>
+          </div>
 
-        {/* 사용자 성별 */}
-        <p className="text-gray-600">
-          성별: {userProfile.gender === "male" ? "남성" : "여성"}
-        </p>
-
-        {/* 사용자 설명 */}
-        <p className="text-gray-600 mt-2">{userProfile.description}</p>
-
-        {/* 수정 버튼 */}
-        <button className="mt-6 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-          프로필 수정
-        </button>
+          {/* 사용자 설명 */}
+          <div className="mb-6">
+            <label className="block text-md font-bold mb-2 text-center">
+              한 줄 소개
+            </label>
+            <p className="text-gray-600 text-center">
+              {userProfile.description}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
