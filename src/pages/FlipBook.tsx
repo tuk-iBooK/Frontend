@@ -27,7 +27,6 @@ const PageCover: ForwardRefRenderFunction<
       data-density="hard"
     >
       {title && (
-        //폰트 나중에 바꾸기
         <h2 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-black text-center z-10">
           {title}
         </h2>
@@ -48,26 +47,20 @@ const Page: ForwardRefRenderFunction<HTMLDivElement, PageProps> = (
   ref
 ) => {
   return (
-    <div className="page bg-[#FDF9F6] p-8 shadow-2xl rounded-lg" ref={ref}>
-      {/* <div
-      className="page relative p-8"
+    <div
+      className="page bg-[#FDF9F6] p-8 shadow-2xl rounded-lg h-full"
       ref={ref}
-      style={{
-        backgroundImage: "url(/images/background.png)",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    > */}
-      {/* <h1 className="text-xl font-bold mb-4">Page Header</h1> */}
-      <div className="w-full h-64 object-cover mb-4 text-lg mt-8">
-        {props.children}
-      </div>
-      {props.number && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-sm">
-          {props.number}
+    >
+      <div className="flex flex-col items-center justify-between h-full">
+        <div className="flex-grow w-full mb-4 text-lg mt-8">
+          {props.children}
         </div>
-      )}
+        {props.number && (
+          <div className="w-full text-center text-sm mt-auto">
+            {props.number}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -107,10 +100,7 @@ const Flipbook: React.FC = () => {
   }, [story]);
 
   return (
-    // <div
-    //   style={{ backgroundColor: "#E7E3E0", height: "100vh", padding: "60px" }}
-    // >
-    <div className="bg-[#FAF0E6] h-screen p-16">
+    <div className="bg-[#FAF0E6] min-h-screen p-16 flex justify-center items-center">
       {pages.length > 0 ? (
         <HTMLFlipBook
           width={550}
