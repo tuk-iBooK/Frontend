@@ -121,8 +121,8 @@ const ProfilePage: React.FC = () => {
   if (!userProfile) {
     return (
       <div className="flex  items-center justify-center min-h-screen bg-white p-4">
-        <div className="bg-[#FFF8D6] rounded-3xl pt-12 pb-12 w-3/4 flex items-center justify-center">
-          <div className="flex flex-col items-center">
+        <div className="bg-[#FFF8D6] rounded-3xl pt-12 pb-12 w-1/2 flex items-center justify-center">
+          {/* <div className="flex flex-col items-center">
             <div className="w-56 h-56 rounded-full bg-[#EBEBEB] border-gray-500 overflow-hidden flex items-center justify-center">
               <img
                 src={userProfileIcon}
@@ -131,8 +131,11 @@ const ProfilePage: React.FC = () => {
               />
             </div>
           </div>
-          <div className="h-96 border-l-2 border-gray-300 ml-16 mr-16"></div>
+          <div className="h-96 border-l-2 border-gray-300 ml-16 mr-16"></div> */}
           <div className="items-center w-96 rounded-lg">
+            <h2 className="text-xl font-bold text-center mb-12">
+              나만의 프로필을 만들어주세요!
+            </h2>
             <form onSubmit={handleProfileSubmit}>
               <div className="mb-6">
                 <label className="block text-md font-bold mb-2">
@@ -206,8 +209,8 @@ const ProfilePage: React.FC = () => {
     // 수정 모드일 때 폼을 렌더링
     return (
       <div className="flex  items-center justify-center min-h-screen bg-white p-4">
-        <div className="bg-[#FFF8D6] rounded-3xl pt-12 pb-12 w-3/4 flex items-center justify-center">
-          <div className="flex flex-col items-center">
+        <div className="bg-[#FFF8D6] rounded-3xl pt-12 pb-12 w-1/2 flex items-center justify-center">
+          {/* <div className="flex flex-col items-center">
             <div className="w-56 h-56 rounded-full bg-[#EBEBEB] border-gray-500 overflow-hidden flex items-center justify-center">
               <img
                 src={userProfileIcon}
@@ -216,7 +219,7 @@ const ProfilePage: React.FC = () => {
               />
             </div>
           </div>
-          <div className="h-96 border-l-2 border-gray-300 ml-16 mr-16"></div>
+          <div className="h-96 border-l-2 border-gray-300 ml-16 mr-16"></div> */}
           <div className="items-center w-96 rounded-lg">
             <form onSubmit={handleProfileSubmit}>
               <div className="mb-6">
