@@ -166,14 +166,16 @@ const FirstResultPage: React.FC = () => {
         dispatch(addPage({ ...parsedData }));
         console.log("Redux에 페이지 추가됨", parsedData);
 
+        // 제목과 내용을 합쳐서 content로 보냄
+        const combinedContent = `${parsedData.title}${parsedData.content}`;
+
         // API 요청 : 이야기 저장
         const saveStoryResponse = await axios.post(
           "http://localhost:8000/api/story/save_story/",
-          { story_id: story, content: parsedData.content },
+          { story_id: story, content: combinedContent },
           config
         );
-
-        await createAndSaveImage(parsedData.pageId, parsedData.content);
+        await createAndSaveImage(parsedData.pageId, combinedContent);
       } else {
         console.error("API 요청 실패 :", response);
       }
