@@ -8,26 +8,28 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // 로그인 상태를 확인하는 useEffect
   useEffect(() => {
     const token = localStorage.getItem("id");
     if (token) {
-      setIsLoggedIn(true);
+      setIsLoggedIn(true); // 토큰이 있으면 로그인 상태로 전환
+    } else {
+      setIsLoggedIn(false); // 토큰이 없으면 로그아웃 상태로 전환
     }
-  }, []);
+  }, []); // 컴포넌트가 처음 렌더링될 때 실행
 
-  useEffect(() => {
-    // 컴포넌트가 처음 렌더링될 때 실행되는 로직.
-    // localStorage에 로그인 정보가 남아있으면 redux의 로그인 상태를 true로 한다.
-    if (localStorage.getItem("id") !== null) {
-      dispatch(loginSuccess());
-    }
-  }, []);
+  // useEffect(() => {
+  //   // 컴포넌트가 처음 렌더링될 때 실행되는 로직.
+  //   // localStorage에 로그인 정보가 남아있으면 redux의 로그인 상태를 true로 한다.
+  //   if (localStorage.getItem("id") !== null) {
+  //     dispatch(loginSuccess());
+  //   }
+  // }, []);
 
   const handleLogout = () => {
     // 컴포넌트가 처음 렌더링될 때 실행되는 로직.
     localStorage.removeItem("id");
     setIsLoggedIn(false);
-    alert("로그아웃되었습니다.");
     navigate("/");
   };
 
