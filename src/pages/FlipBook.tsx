@@ -1,7 +1,7 @@
 import HTMLFlipBook from "react-pageflip";
 import React, { useState, useEffect, ForwardRefRenderFunction } from "react";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 type PageProps = {
@@ -70,6 +70,7 @@ const PageWithRef = React.forwardRef(Page);
 
 const Flipbook: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [pages, setPages] = useState<PageData[]>([]);
   const reduxPages = useSelector((state: any) => state.story.pages);
   const titlePage = reduxPages.find((page: any) => page.pageId === 1); // pageId가 1인 페이지 가져오기
@@ -133,7 +134,25 @@ const Flipbook: React.FC = () => {
               </div>
             </PageWithRef>
           ))}
-          <PageCoverWithRef>see you</PageCoverWithRef>
+          <PageCoverWithRef>
+            <div className="flex flex-col items-center justify-center">
+              <h2 className="text-lg font-bold mb-12">
+                이야기가 완성되었습니다!
+              </h2>
+              <button
+                className="w-full py-2 text-base mb-8 p-4 bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+                onClick={() => navigate("/")}
+              >
+                홈으로 돌아가기
+              </button>
+              <button
+                className="w-full py-2 text-base p-4 bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+                onClick={() => navigate("/profile")}
+              >
+                내 책장 바로가기
+              </button>
+            </div>
+          </PageCoverWithRef>
         </HTMLFlipBook>
       ) : (
         <p>지정된 ID의 페이지가 없습니다.</p>
