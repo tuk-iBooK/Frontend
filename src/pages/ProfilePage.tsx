@@ -3,12 +3,6 @@ import axios from "axios";
 import userProfileIcon from "src/assets/public/user.png";
 import manIcon from "src/assets/public/man.png";
 import womanIcon from "src/assets/public/woman.png";
-import image1 from "../assets/public/01.png";
-import image2 from "../assets/public/02.png";
-import image3 from "../assets/public/03.png";
-import image4 from "../assets/public/04.png";
-import image5 from "../assets/public/05.png";
-import image6 from "../assets/public/06.png";
 
 interface UserProfile {
   user_nickname: string;
@@ -25,6 +19,7 @@ const ProfilePage: React.FC = () => {
   const [age, setAge] = useState<number | null>(null);
   const [gender, setGender] = useState("male");
   const [description, setDescription] = useState("");
+  const [books, setBooks] = useState<{ title: string; image: string }[]>([]);
 
   const token = localStorage.getItem("id");
 
@@ -49,6 +44,19 @@ const ProfilePage: React.FC = () => {
         );
 
         setUserProfile(response.data);
+
+        const booksResponse = await axios.get<
+          { title: string; pk: Number; image: string }[]
+        >("http://localhost:8000/api/user/story/", config);
+
+        console.log(booksResponse.data); // 데이터가 제대로 들어오는지 확인
+
+        const bookData = booksResponse.data.map((book) => ({
+          title: book.title,
+          image: book.image,
+        }));
+        setBooks(bookData);
+
         setLoading(false);
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -226,78 +234,24 @@ const ProfilePage: React.FC = () => {
 
       <div className="w-4/5 border-t border-gray-300 mb-8"></div>
 
-      {/* 작품들 영역 */}
+      {/* 책장 영역 */}
       <div className="w-3/4">
-        <div className="flex p-4 text-xl font-bold">나의 작품들</div>
+        <div className="flex p-4 text-xl font-bold">나의 책장</div>
         <div className="grid grid-cols-3 gap-8 overflow-y-auto max-h-[500px] p-4">
-          {/* 작품 아이템들 */}
-          <div className="flex-shrink-0 w-60">
-            <img
-              src={image1}
-              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
-              onClick={(event) => handleClick(event, "호기심 많은 소녀")}
-            />
-            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-              호기심 많은 소녀
-            </p>
-          </div>
-
-          <div className="flex-shrink-0 w-60">
-            <img
-              src={image2}
-              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
-              onClick={(event) => handleClick(event, "끝없는 비밀의 길")}
-            />
-            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-              끝없는 비밀의 길
-            </p>
-          </div>
-
-          <div className="flex-shrink-0 w-60">
-            <img
-              src={image3}
-              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
-              onClick={(event) => handleClick(event, "무서운 곰과 친구하기")}
-            />
-            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-              무서운 곰과 친구하기
-            </p>
-          </div>
-
-          <div className="flex-shrink-0 w-60">
-            <img
-              src={image4}
-              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
-              onClick={(event) =>
-                handleClick(event, "신비로운 숲 속 비밀의 장소")
-              }
-            />
-            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-              신비로운 숲 속 비밀의 장소
-            </p>
-          </div>
-
-          <div className="flex-shrink-0 w-60">
-            <img
-              src={image5}
-              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
-              onClick={(event) => handleClick(event, "요정의 비밀")}
-            />
-            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-              요정의 비밀
-            </p>
-          </div>
-
-          <div className="flex-shrink-0 w-60">
-            <img
-              src={image6}
-              className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
-              onClick={(event) => handleClick(event, "해적선의 보물을 찾아서")}
-            />
-            <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-              해적선의 보물을 찾아서
-            </p>
-          </div>
+          {books.map((book, index) =>
+            book.title && book.image ? (
+              <div key={index} className="flex-shrink-0 w-60">
+                <img
+                  src={book.image}
+                  className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
+                  alt={book.title}
+                />
+                <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
+                  {book.title}
+                </p>
+              </div>
+            ) : null
+          )}
         </div>
       </div>
     </div>
