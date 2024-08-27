@@ -223,7 +223,7 @@ const FirstResultPage: React.FC = () => {
           {
             story_id: story,
             page_number: pageId,
-            image_url: compressedImageUrl,
+            image_url: imageResponse.data.image_url,
           },
           config
         );

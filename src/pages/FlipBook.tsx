@@ -27,9 +27,9 @@ const PageCover: ForwardRefRenderFunction<
       data-density="hard"
     >
       {title && (
-        <h2 className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-black text-center z-10">
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-black text-center z-10">
           {title}
-        </h2>
+        </div>
       )}
       {imageUrl && React.isValidElement(imageUrl) && (
         <img
@@ -84,10 +84,11 @@ const Flipbook: React.FC = () => {
     const fetchPages = async () => {
       try {
         const response = await axios.get<PageData[]>(
-          `http://localhost:8000/api/story-content/list?story_id=${story}`
+          `http://localhost:8000/api/story-content/list/?story_id=${story}`
         );
         if (Array.isArray(response.data)) {
           setPages(response.data);
+          console.log("Fetched pages:", response.data);
         } else {
           setPages([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 초기화
         }

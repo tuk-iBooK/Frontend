@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import userProfileIcon from "src/assets/public/user.png";
 import manIcon from "src/assets/public/man.png";
@@ -21,9 +22,16 @@ const ProfilePage: React.FC = () => {
   const [description, setDescription] = useState("");
   const [nickname, setNickname] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false); // 수정 상태 관리
-  const [books, setBooks] = useState<{ title: string; image: string }[]>([]);
+  const [books, setBooks] = useState<
+    { title: string; image: string; id: number }[]
+  >([]);
+  const navigate = useNavigate();
 
   const token = localStorage.getItem("id");
+
+  const handleBookClick = (storyId: number) => {
+    navigate("/flipbook", { state: { story: storyId } });
+  };
 
   // 프로필 가져오기 및 상태 초기화 함수
   const fetchUserProfile = async () => {
@@ -47,15 +55,30 @@ const ProfilePage: React.FC = () => {
       setDescription(response.data.description);
 
       const booksResponse = await axios.get<
-        { title: string; pk: Number; image: string }[]
+        { pk: Number; title: string; image: string }[]
       >("http://localhost:8000/api/user/story/", config);
 
       console.log(booksResponse.data);
 
-      const bookData = booksResponse.data.map((book) => ({
-        title: book.title,
-        image: book.image,
-      }));
+      //   const bookData = booksResponse.data.map((book) => ({
+      //     id: Number(book.pk),
+      //     title: book.title,
+      //     image: book.image,
+      //   }));
+      //   setBooks(bookData);
+
+      const bookData = booksResponse.data.map((book) => {
+        console.log("Title:", book.title); // title의 값이 제대로 출력되는지 확인
+        console.log("Image:", book.image); // image의 값도 확인
+        console.log("PK:", book.pk); // pk 확인
+
+        return {
+          id: Number(book.pk),
+          title: book.title || "제목", // title이 없을 경우 'No Title'을 기본값으로 설정
+          image: book.image,
+        };
+      });
+
       setBooks(bookData);
 
       setLoading(false);
@@ -345,11 +368,19 @@ const ProfilePage: React.FC = () => {
         <div className="grid grid-cols-3 gap-8 overflow-y-auto max-h-[500px] p-4">
           {books.map((book, index) =>
             book.title && book.image ? (
-              <div key={index} className="flex-shrink-0 w-60">
+              <div
+                key={index}
+                className="flex-shrink-0 w-60 cursor-pointer"
+                onClick={() => handleBookClick(book.id)}
+              >
                 <img
                   src={book.image}
                   className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
                   alt={book.title}
+                  onError={(e) => {
+                    console.error("이미지 로드 실패:", e.currentTarget.src);
+                    e.currentTarget.src = "https://via.placeholder.com/150"; // 이미지 로드 실패 시 대체 이미지 사용
+                  }}
                 />
                 <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
                   {book.title}
