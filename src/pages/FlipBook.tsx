@@ -1,6 +1,5 @@
 import HTMLFlipBook from "react-pageflip";
 import React, { useState, useEffect, ForwardRefRenderFunction } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
@@ -10,6 +9,7 @@ type PageProps = {
 };
 
 interface PageData {
+  title: string;
   page: number;
   content: string;
   image: string;
@@ -72,10 +72,12 @@ const Flipbook: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [pages, setPages] = useState<PageData[]>([]);
-  const reduxPages = useSelector((state: any) => state.story.pages);
-  const titlePage = reduxPages.find((page: any) => page.pageId === 1); // pageId가 1인 페이지 가져오기
-  const title = titlePage ? titlePage.title : ""; // 제목 가져오기
-  const coverImageUrl = titlePage ? titlePage.imageUrl : ""; // 표지 가져오기
+  // const reduxPages = useSelector((state: any) => state.story.pages);
+  // const titlePage = reduxPages.find((page: any) => page.pageId === 1); // pageId가 1인 페이지 가져오기
+  // const title = titlePage ? titlePage.title : ""; // 제목 가져오기
+  // const coverImageUrl = titlePage ? titlePage.imageUrl : ""; // 표지 가져오기
+  const [title, setTitle] = useState<string>(""); // 서버에서 가져온 타이틀 저장
+  const [coverImageUrl, setCoverImageUrl] = useState<string>(""); // 서버에서 가져온 이미지 저장
 
   const story = location.state?.story;
   console.log("story:", story);
@@ -86,7 +88,18 @@ const Flipbook: React.FC = () => {
         const response = await axios.get<PageData[]>(
           `http://localhost:8000/api/story-content/list/?story_id=${story}`
         );
-        if (Array.isArray(response.data)) {
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          // 첫 번째 페이지는 표지로 사용하고 title만 가져옴
+          const coverPage = response.data[0];
+          console.log("Cover page:", coverPage);
+          setTitle(coverPage.title || "제목없음"); // 표지 타이틀 설정
+          setCoverImageUrl(coverPage.image); // 표지 이미지 설정
+
+          console.log(
+            "Fetched content:",
+            response.data.map((page) => page.content)
+          );
+
           setPages(response.data);
           console.log("Fetched pages:", response.data);
         } else {
@@ -102,7 +115,7 @@ const Flipbook: React.FC = () => {
   }, [story]);
 
   return (
-    <div className="bg-[#FAF0E6] min-h-screen p-16 flex justify-center items-center">
+    <div className="bg-[#FAF0E6] min-h-screen h-screen flex justify-center items-center overflow-hidden">
       {pages.length > 0 ? (
         <HTMLFlipBook
           width={550}

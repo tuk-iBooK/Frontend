@@ -162,20 +162,31 @@ const FirstResultPage: React.FC = () => {
         config
       );
       if (response.status === 200) {
-        const parsedData = parseResponse(response.data.answer);
-        dispatch(addPage({ ...parsedData }));
-        console.log("Redux에 페이지 추가됨", parsedData);
+        const data = response.data;
+        // dispatch(addPage(data));
+        console.log("서버 응답 데이터:", data);
 
-        // 제목과 내용을 합쳐서 content로 보냄
-        const combinedContent = `${parsedData.title}${parsedData.content}`;
+        const pageId = pages.length + 1;
+
+        const parsedData = parseResponse(data.answer);
+
+        const pageData = {
+          ...data,
+          ...parsedData,
+          pageId: pageId,
+        };
+
+        dispatch(addPage(pageData)); // Redux에 페이지 추가
+        console.log("Redux에 페이지 추가됨", pageData);
 
         // API 요청 : 이야기 저장
         const saveStoryResponse = await axios.post(
           "http://localhost:8000/api/story/save_story/",
-          { story_id: story, content: combinedContent },
+          { story_id: story, content: data.answer },
           config
         );
-        await createAndSaveImage(parsedData.pageId, combinedContent);
+        console.log("response:", saveStoryResponse.data);
+        await createAndSaveImage(pageId, data.answer);
       } else {
         console.error("API 요청 실패 :", response);
       }
@@ -266,12 +277,15 @@ const FirstResultPage: React.FC = () => {
           // 다음 API 요청 : 이야기 저장
           const saveStoryResponse = await axios.post(
             "http://localhost:8000/api/story/save_story/",
-            { story_id: story, content: parsedData.content },
+            { story_id: story, content: updateResponse.data.answer },
             config
           );
           console.log("저장된 이야기 내용 :", saveStoryResponse);
 
-          await createAndSaveImage(parsedData.pageId, parsedData.content);
+          await createAndSaveImage(
+            parsedData.pageId,
+            updateResponse.data.answer
+          );
         } else {
           console.error("이야기 저장 요청 실패 :", updateResponse);
         }

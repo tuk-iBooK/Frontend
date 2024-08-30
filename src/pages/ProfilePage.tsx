@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import userProfileIcon from "src/assets/public/user.png";
 import manIcon from "src/assets/public/man.png";
 import womanIcon from "src/assets/public/woman.png";
 import editIcon from "src/assets/public/edit.png";
@@ -377,10 +376,6 @@ const ProfilePage: React.FC = () => {
                   src={book.image}
                   className="w-full h-auto rounded-t-lg bg-gray-100 aspect-square p-2"
                   alt={book.title}
-                  onError={(e) => {
-                    console.error("이미지 로드 실패:", e.currentTarget.src);
-                    e.currentTarget.src = "https://via.placeholder.com/150"; // 이미지 로드 실패 시 대체 이미지 사용
-                  }}
                 />
                 <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
                   {book.title}
