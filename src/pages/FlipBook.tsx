@@ -88,6 +88,11 @@ const Flipbook: React.FC = () => {
         const response = await axios.get<PageData[]>(
           `http://localhost:8000/api/story-content/list/?story_id=${story}`
         );
+        console.log("Fetched raw response:", response);
+
+        // 여기서 response.data의 구조를 확인해보세요
+        console.log("Fetched pages:", response.data);
+
         if (Array.isArray(response.data) && response.data.length > 0) {
           // 첫 번째 페이지는 표지로 사용하고 title만 가져옴
           const coverPage = response.data[0];

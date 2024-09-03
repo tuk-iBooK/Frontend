@@ -47,6 +47,19 @@ const FirstResultPage: React.FC = () => {
     });
   }, []);
 
+  useEffect(() => {
+    console.log("현재 페이지:", currentPage);
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (currentPage?.imageUrl) {
+      const img = new Image();
+      img.src = currentPage.imageUrl;
+
+      img.onload = () => setLoading(false);
+    }
+  }, [currentPage?.imageUrl]);
+
   //서버 데이터 파싱하는 함수
   const parseResponse = (responseText: string) => {
     const titleMatch = responseText.match(/제목: (.*)\n/);
@@ -163,7 +176,6 @@ const FirstResultPage: React.FC = () => {
       );
       if (response.status === 200) {
         const data = response.data;
-        // dispatch(addPage(data));
         console.log("서버 응답 데이터:", data);
 
         const pageId = pages.length + 1;
@@ -267,25 +279,36 @@ const FirstResultPage: React.FC = () => {
           config
         );
         console.log("두 번째 API 요청 성공 :", updateResponse);
+        console.log("받은 데이터:", updateResponse.data);
+        console.log("답변 내용:", updateResponse.data.answer);
 
         if (updateResponse.status === 200 && updateResponse.data.answer) {
-          const parsedData = parseResponse(updateResponse.data.answer);
-          dispatch(
-            addPage({ ...parsedData }) // 새로운 페이지를 추가
-          );
+          const data = updateResponse.data;
+          const pageId = pages.length + 1;
+
+          const parsedData = parseResponse(data.answer);
+
+          const pageData = {
+            ...data,
+            ...parsedData,
+            pageId: pageId,
+          };
+          console.log("추가할 페이지 데이터:", pageData);
+
+          dispatch(addPage(pageData)); // 새로운 페이지를 추가
+
+          console.log("현재 페이지 목록:", pages);
 
           // 다음 API 요청 : 이야기 저장
           const saveStoryResponse = await axios.post(
             "http://localhost:8000/api/story/save_story/",
-            { story_id: story, content: updateResponse.data.answer },
+            { story_id: story, content: data.answer },
             config
           );
           console.log("저장된 이야기 내용 :", saveStoryResponse);
+          console.log("업데이트된 pages 배열:", pages);
 
-          await createAndSaveImage(
-            parsedData.pageId,
-            updateResponse.data.answer
-          );
+          await createAndSaveImage(pageId, data.answer);
         } else {
           console.error("이야기 저장 요청 실패 :", updateResponse);
         }
@@ -296,7 +319,7 @@ const FirstResultPage: React.FC = () => {
         setLoading(false);
       }
     },
-    [dispatch, story, currentPage, config]
+    [dispatch, story, currentPage, config, pages]
   );
 
   const handleEditContent = async (updateImage: boolean) => {
