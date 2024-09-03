@@ -364,7 +364,7 @@ const ProfilePage: React.FC = () => {
       {/* 책장 영역 */}
       <div className="w-3/4">
         <div className="flex p-4 text-xl font-bold">나의 책장</div>
-        <div className="grid grid-cols-3 gap-8 overflow-y-auto max-h-[500px] p-4">
+        <div className="grid grid-cols-3 gap-8 overflow-y-auto max-h-[900px] p-4">
           {books.map((book, index) =>
             book.title && book.image ? (
               <div
