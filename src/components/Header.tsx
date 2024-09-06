@@ -70,9 +70,9 @@ const Header: React.FC = () => {
           className="w-1/2 py-3 rounded-full p-8 bg-gray-100"
         />
         {/* 내 책장 버튼 */}
-        <div className="px-12 py-2 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFFAE1]   rounded-full text-center">
+        {/* <div className="px-12 py-2 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFFAE1]   rounded-full text-center">
           <Link to="/mybooks">내 책장 </Link>
-        </div>
+        </div> */}
         {/* 내 프로필 버튼 */}
         <Link
           to="/profile"
