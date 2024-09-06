@@ -146,62 +146,35 @@ const MainPage: React.FC = () => {
       <div className="flex justify-center">
         <div className="w-3/4 border-2 border-gray-300 mt-8 p-8 rounded-2xl">
           <div className="p-4 border-b text-xl font-bold text-left">
-            인기 작품 Top 5
+            인기 작품 미리보기
           </div>
-          <div className="w-full overflow-x-auto whitespace-nowrap mt-8 mb-12 px-2">
-            <div className="inline-block">
-              <img
-                src={image1}
-                className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 cursor-pointer"
-                onClick={handleClick}
-              />
-              <p className="w-60 p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-                호기심 많은 소녀
-              </p>
-            </div>
 
-            <div className="inline-block">
-              <img
-                src={image2}
-                className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 cursor-pointer"
-                onClick={handleClick}
-              />
-              <p className="w-60 p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-                끝없는 비밀의 길
-              </p>
-            </div>
-
-            <div className="inline-block">
-              <img
-                src={image3}
-                className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 cursor-pointer"
-                onClick={handleClick}
-              />
-              <p className="w-60 p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-                무서운 곰과 친구하기
-              </p>
-            </div>
-
-            <div className="inline-block">
-              <img
-                src={image4}
-                className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 cursor-pointer"
-                onClick={handleClick}
-              />
-              <p className="w-60 p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-                신비로운 숲 속 비밀의 장소
-              </p>
-            </div>
-
-            <div className="inline-block">
-              <img
-                src={image5}
-                className="w-60 rounded-t-lg bg-gray-100 aspect-square p-2 cursor-pointer"
-                onClick={handleClick}
-              />
-              <p className="w-60 p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-                요정의 비밀
-              </p>
+          <div className="relative flex overflow-hidden group">
+            <div className="flex animate-infiniteSlide">
+              {/* 더미 이미지들 */}
+              {[
+                image1,
+                image2,
+                image3,
+                image4,
+                image5,
+                image1,
+                image2,
+                image3,
+                image4,
+                image5,
+              ].map((image, index) => (
+                <div key={index} className="flex-shrink-0 w-60 mx-4">
+                  <img
+                    src={image}
+                    className="w-full rounded-t-lg bg-gray-100 aspect-square p-2"
+                    alt={`Image ${index + 1}`}
+                  />
+                  <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
+                    제목 {index + 1}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
