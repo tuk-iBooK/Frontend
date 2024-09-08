@@ -18,6 +18,7 @@ import FlipBook from "./pages/FlipBook";
 import Profile from "./pages/ProfilePage";
 import ProfilePage from "./pages/ProfilePage";
 import AllBooksPage from "./pages/AllBooksPage";
+import DummyFlipBook from "./pages/DummyFlipBook";
 
 function App() {
   return (
@@ -39,6 +40,7 @@ function App() {
             <Route path="/flipbook" element={<FlipBook />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/allbooks" element={<AllBooksPage />} />
+            <Route path="/dummy/:id" element={<DummyFlipBook />} />
           </Routes>
         </div>
       </BrowserRouter>

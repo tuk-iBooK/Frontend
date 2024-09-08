@@ -72,10 +72,6 @@ const Flipbook: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [pages, setPages] = useState<PageData[]>([]);
-  // const reduxPages = useSelector((state: any) => state.story.pages);
-  // const titlePage = reduxPages.find((page: any) => page.pageId === 1); // pageId가 1인 페이지 가져오기
-  // const title = titlePage ? titlePage.title : ""; // 제목 가져오기
-  // const coverImageUrl = titlePage ? titlePage.imageUrl : ""; // 표지 가져오기
   const [title, setTitle] = useState<string>(""); // 서버에서 가져온 타이틀 저장
   const [coverImageUrl, setCoverImageUrl] = useState<string>(""); // 서버에서 가져온 이미지 저장
 
@@ -106,11 +102,11 @@ const Flipbook: React.FC = () => {
           setPages(response.data);
           console.log("Fetched pages:", response.data);
         } else {
-          setPages([]); // 응답 데이터가 배열이 아닌 경우 빈 배열로 초기화
+          setPages([]);
         }
       } catch (error) {
         console.error("Error fetching pages:", error);
-        setPages([]); // 오류 발생 시 빈 배열로 초기화
+        setPages([]);
       }
     };
 

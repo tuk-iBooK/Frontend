@@ -59,13 +59,6 @@ const ProfilePage: React.FC = () => {
 
       console.log(booksResponse.data);
 
-      //   const bookData = booksResponse.data.map((book) => ({
-      //     id: Number(book.pk),
-      //     title: book.title,
-      //     image: book.image,
-      //   }));
-      //   setBooks(bookData);
-
       const bookData = booksResponse.data.map((book) => {
         console.log("Title:", book.title); // title의 값이 제대로 출력되는지 확인
         console.log("Image:", book.image); // image의 값도 확인

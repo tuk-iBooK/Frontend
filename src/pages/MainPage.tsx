@@ -23,6 +23,18 @@ const MainPage: React.FC = () => {
     }
   }, []);
 
+  const books = [
+    { id: 1, title: "모험의 시작", coverImageUrl: image1 },
+    { id: 2, title: "숲 속의 비밀", coverImageUrl: image2 },
+    { id: 3, title: "하늘을 나는 모험", coverImageUrl: image3 },
+    { id: 4, title: "바닷속 탐험", coverImageUrl: image4 },
+    { id: 5, title: "마법의 성", coverImageUrl: image5 },
+  ];
+
+  const handleBookClick = (id: number) => {
+    navigate(`/dummy/${id}`); // 작품의 ID를 URL에 추가하여 이동
+  };
+
   useEffect(() => {
     const storedStory = localStorage.getItem("story");
     if (storedStory) {
@@ -62,10 +74,6 @@ const MainPage: React.FC = () => {
       console.error("API 호출 중 오류가 발생했습니다:", error);
     }
   };
-
-  function handleClick() {
-    navigate("/result");
-  }
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto">
@@ -149,29 +157,18 @@ const MainPage: React.FC = () => {
             인기 작품 미리보기
           </div>
 
-          <div className="relative flex overflow-hidden group">
-            <div className="flex animate-infiniteSlide">
-              {/* 더미 이미지들 */}
-              {[
-                image1,
-                image2,
-                image3,
-                image4,
-                image5,
-                image1,
-                image2,
-                image3,
-                image4,
-                image5,
-              ].map((image, index) => (
+          <div className="relative flex overflow-hidden group mt-8">
+            <div className="flex animate-infiniteSlide gap-4">
+              {books.concat(books).map((book, index) => (
                 <div key={index} className="flex-shrink-0 w-60 mx-4">
                   <img
-                    src={image}
+                    src={book.coverImageUrl}
                     className="w-full rounded-t-lg bg-gray-100 aspect-square p-2"
-                    alt={`Image ${index + 1}`}
+                    alt={book.title}
+                    onClick={() => handleBookClick(book.id)} // 각 책의 고유 ID로 처리
                   />
                   <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
-                    제목 {index + 1}
+                    {book.title}
                   </p>
                 </div>
               ))}
