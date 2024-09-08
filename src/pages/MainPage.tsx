@@ -10,6 +10,7 @@ import image2 from "../assets/public/02.png";
 import image3 from "../assets/public/03.png";
 import image4 from "../assets/public/04.png";
 import image5 from "../assets/public/05.png";
+import image8 from "../assets/public/08.png";
 
 const MainPage: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -24,15 +25,15 @@ const MainPage: React.FC = () => {
   }, []);
 
   const books = [
-    { id: 1, title: "모험의 시작", coverImageUrl: image1 },
-    { id: 2, title: "숲 속의 비밀", coverImageUrl: image2 },
-    { id: 3, title: "하늘을 나는 모험", coverImageUrl: image3 },
-    { id: 4, title: "바닷속 탐험", coverImageUrl: image4 },
-    { id: 5, title: "마법의 성", coverImageUrl: image5 },
+    { id: 1, title: "마법의 숲 공주의 비밀", coverImageUrl: image1 },
+    { id: 2, title: "꿈 같은 곳에서", coverImageUrl: image2 },
+    { id: 3, title: "숲의 인도자", coverImageUrl: image3 },
+    { id: 4, title: "요정들의 시계탑", coverImageUrl: image8 },
+    { id: 5, title: "신비로운 모험", coverImageUrl: image5 },
   ];
 
   const handleBookClick = (id: number) => {
-    navigate(`/dummy/${id}`); // 작품의 ID를 URL에 추가하여 이동
+    navigate(`/dummy/${id}`);
   };
 
   useEffect(() => {
@@ -165,7 +166,7 @@ const MainPage: React.FC = () => {
                     src={book.coverImageUrl}
                     className="w-full rounded-t-lg bg-gray-100 aspect-square p-2"
                     alt={book.title}
-                    onClick={() => handleBookClick(book.id)} // 각 책의 고유 ID로 처리
+                    onClick={() => handleBookClick(book.id)}
                   />
                   <p className="w-full p-1 font-bold text-center shadow-lg rounded-b-lg bg-gray-100">
                     {book.title}

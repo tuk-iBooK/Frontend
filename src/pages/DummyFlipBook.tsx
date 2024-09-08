@@ -1,6 +1,15 @@
 import React, { ForwardedRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import HTMLFlipBook from "react-pageflip";
+import image1 from "../assets/public/01.png";
+import image2 from "../assets/public/02.png";
+import image3 from "../assets/public/03.png";
+import image4 from "../assets/public/04.png";
+import image5 from "../assets/public/05.png";
+import image6 from "../assets/public/06.png";
+import image7 from "../assets/public/07.png";
+import image8 from "../assets/public/08.png";
+import image9 from "../assets/public/09.png";
 
 interface PageProps {
   children?: React.ReactNode;
@@ -13,11 +22,29 @@ interface PageCoverProps {
 }
 
 const PageCover = React.forwardRef<HTMLDivElement, PageCoverProps>(
-  ({ children }, ref) => (
-    <div className="relative w-full h-full" ref={ref} data-density="hard">
-      {children}
-    </div>
-  )
+  ({ children }, ref) => {
+    const [title, imageUrl] = React.Children.toArray(children);
+    return (
+      <div
+        className="relative w-full h-full overflow-hidden shadow-2xl rounded-lg"
+        ref={ref}
+        data-density="hard"
+      >
+        {title && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl font-bold text-black text-center z-10">
+            {title}
+          </div>
+        )}
+        {imageUrl && React.isValidElement(imageUrl) && (
+          <img
+            src={imageUrl.props.src}
+            alt="Cover"
+            className="absolute top-0 left-0 w-full h-full object-cover"
+          />
+        )}
+      </div>
+    );
+  }
 );
 
 const Page = React.forwardRef<HTMLDivElement, PageProps>(
@@ -39,44 +66,45 @@ const Page = React.forwardRef<HTMLDivElement, PageProps>(
 const DummyFlipBook: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const bookId = parseInt(id || "1", 10); // 문자열을 숫자로 변환, 기본값은 1
+  const navigate = useNavigate();
 
   const books = [
     {
       id: 1,
-      title: "모험의 시작",
-      coverImageUrl: "https://example.com/cover1.png",
+      title: "마법의 숲 공주의 비밀",
+      coverImageUrl: image1,
       pages: [
         {
           page: 1,
-          image: "https://example.com/page1-1.png",
+          image: image1,
           content: "첫 번째 이야기의 시작입니다.",
         },
         {
           page: 2,
-          image: "https://example.com/page1-2.png",
+          image: image7,
           content: "모험은 계속됩니다.",
         },
         {
           page: 3,
-          image: "https://example.com/page1-2.png",
+          image: image6,
           content: "모험은 계속됩니다.",
         },
         {
           page: 4,
-          image: "https://example.com/page1-2.png",
+          image: image8,
           content: "모험은 계속됩니다.",
         },
         {
           page: 5,
-          image: "https://example.com/page1-2.png",
+          image: image9,
           content: "모험은 계속됩니다.",
         },
       ],
     },
     {
       id: 2,
-      title: "숲 속의 비밀",
-      coverImageUrl: "https://example.com/cover2.png",
+      title: "꿈 같은 곳에서",
+      coverImageUrl: image2,
       pages: [
         {
           page: 1,
@@ -107,8 +135,8 @@ const DummyFlipBook: React.FC = () => {
     },
     {
       id: 3,
-      title: "하늘을 나는 모험",
-      coverImageUrl: "https://example.com/cover3.png",
+      title: "숲의 인도자",
+      coverImageUrl: image3,
       pages: [
         {
           page: 1,
@@ -139,8 +167,8 @@ const DummyFlipBook: React.FC = () => {
     },
     {
       id: 4,
-      title: "바닷속 탐험",
-      coverImageUrl: "https://example.com/cover4.png",
+      title: "요정들의 시계탑",
+      coverImageUrl: image8,
       pages: [
         {
           page: 1,
@@ -171,8 +199,8 @@ const DummyFlipBook: React.FC = () => {
     },
     {
       id: 5,
-      title: "마법의 성",
-      coverImageUrl: "https://example.com/cover5.png",
+      title: "신비로운 모험",
+      coverImageUrl: image5,
       pages: [
         {
           page: 1,
@@ -249,9 +277,16 @@ const DummyFlipBook: React.FC = () => {
         ))}
 
         {/* 마지막 페이지 */}
-        {/* <PageCover>
-          <h2 className="text-lg font-bold">이야기가 끝났습니다!</h2>
-        </PageCover> */}
+        <PageCover>
+          <div className="flex flex-col items-center justify-center">
+            <button
+              className="w-full py-2 text-base mb-8 p-4 bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+              onClick={() => navigate("/")}
+            >
+              홈으로 돌아가기
+            </button>
+          </div>
+        </PageCover>
       </HTMLFlipBook>
     </div>
   );
