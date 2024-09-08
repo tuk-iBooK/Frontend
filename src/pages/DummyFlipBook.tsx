@@ -1,7 +1,7 @@
 import React, { ForwardedRef } from "react";
+import { useParams } from "react-router-dom";
 import HTMLFlipBook from "react-pageflip";
 
-// 타입 정의
 interface PageProps {
   children?: React.ReactNode;
   number?: number;
@@ -12,7 +12,6 @@ interface PageCoverProps {
   number?: number;
 }
 
-// 페이지 커버 컴포넌트 (표지)
 const PageCover = React.forwardRef<HTMLDivElement, PageCoverProps>(
   ({ children }, ref) => (
     <div className="relative w-full h-full" ref={ref} data-density="hard">
@@ -21,7 +20,6 @@ const PageCover = React.forwardRef<HTMLDivElement, PageCoverProps>(
   )
 );
 
-// 페이지 컴포넌트 (본문)
 const Page = React.forwardRef<HTMLDivElement, PageProps>(
   ({ number, children }, ref) => (
     <div
@@ -39,6 +37,9 @@ const Page = React.forwardRef<HTMLDivElement, PageProps>(
 );
 
 const DummyFlipBook: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  const bookId = parseInt(id || "1", 10); // 문자열을 숫자로 변환, 기본값은 1
+
   const books = [
     {
       id: 1,
@@ -56,17 +57,17 @@ const DummyFlipBook: React.FC = () => {
           content: "모험은 계속됩니다.",
         },
         {
-          page: 2,
+          page: 3,
           image: "https://example.com/page1-2.png",
           content: "모험은 계속됩니다.",
         },
         {
-          page: 2,
+          page: 4,
           image: "https://example.com/page1-2.png",
           content: "모험은 계속됩니다.",
         },
         {
-          page: 2,
+          page: 5,
           image: "https://example.com/page1-2.png",
           content: "모험은 계속됩니다.",
         },
@@ -79,13 +80,28 @@ const DummyFlipBook: React.FC = () => {
       pages: [
         {
           page: 1,
-          image: "https://example.com/page2-1.png",
-          content: "어느 날 숲 속에서 발견한 비밀.",
+          image: "https://example.com/page1-1.png",
+          content: "첫 번째 이야기의 시작입니다.",
         },
         {
           page: 2,
-          image: "https://example.com/page2-2.png",
-          content: "그 비밀을 찾아 떠난 여정.",
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 3,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 4,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 5,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
         },
       ],
     },
@@ -96,13 +112,28 @@ const DummyFlipBook: React.FC = () => {
       pages: [
         {
           page: 1,
-          image: "https://example.com/page3-1.png",
-          content: "하늘을 나는 이야기의 시작.",
+          image: "https://example.com/page1-1.png",
+          content: "첫 번째 이야기의 시작입니다.",
         },
         {
           page: 2,
-          image: "https://example.com/page3-2.png",
-          content: "구름 위에서의 모험.",
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 3,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 4,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 5,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
         },
       ],
     },
@@ -113,13 +144,28 @@ const DummyFlipBook: React.FC = () => {
       pages: [
         {
           page: 1,
-          image: "https://example.com/page4-1.png",
-          content: "깊은 바닷속에서 펼쳐지는 이야기.",
+          image: "https://example.com/page1-1.png",
+          content: "첫 번째 이야기의 시작입니다.",
         },
         {
           page: 2,
-          image: "https://example.com/page4-2.png",
-          content: "해저 생물들과의 만남.",
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 3,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 4,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 5,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
         },
       ],
     },
@@ -130,20 +176,40 @@ const DummyFlipBook: React.FC = () => {
       pages: [
         {
           page: 1,
-          image: "https://example.com/page5-1.png",
-          content: "마법의 성에서 벌어지는 신비한 일들.",
+          image: "https://example.com/page1-1.png",
+          content: "첫 번째 이야기의 시작입니다.",
         },
         {
           page: 2,
-          image: "https://example.com/page5-2.png",
-          content: "그 성에서의 모험.",
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 3,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 4,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
+        },
+        {
+          page: 5,
+          image: "https://example.com/page1-2.png",
+          content: "모험은 계속됩니다.",
         },
       ],
     },
   ];
 
-  // 더미 데이터 중 첫 번째 책을 선택하여 FlipBook으로 렌더링
-  const selectedBook = books[0];
+  // books 배열에서 전달된 bookId에 맞는 책을 찾음
+  const selectedBook = books.find((book) => book.id === bookId);
+
+  // selectedBook이 없는 경우 처리
+  if (!selectedBook) {
+    return <p>해당 책을 찾을 수 없습니다.</p>;
+  }
 
   return (
     <div className="bg-[#FAF0E6] min-h-screen h-screen flex justify-center items-center overflow-hidden">
@@ -183,9 +249,9 @@ const DummyFlipBook: React.FC = () => {
         ))}
 
         {/* 마지막 페이지 */}
-        <PageCover>
+        {/* <PageCover>
           <h2 className="text-lg font-bold">이야기가 끝났습니다!</h2>
-        </PageCover>
+        </PageCover> */}
       </HTMLFlipBook>
     </div>
   );
