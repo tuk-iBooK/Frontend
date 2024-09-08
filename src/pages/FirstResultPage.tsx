@@ -493,13 +493,13 @@ const FirstResultPage: React.FC = () => {
               <div className="flex justify-between mt-12">
                 <button
                   onClick={() => setIsEditingText(false)}
-                  className="bg-gray-300 text-white p-2 rounded-lg flex-grow mr-4"
+                  className="bg-gray-300 text-black p-2 rounded-lg flex-grow mr-4 hover:bg-gray-400 hover:text-white"
                 >
                   닫기
                 </button>
                 <button
                   onClick={() => handleEditContent(false)}
-                  className="bg-gray-300 text-white p-2 rounded-lg flex-grow ml-4"
+                  className="bg-gray-300 text-black p-2 rounded-lg flex-grow ml-4 hover:bg-gray-400 hover:text-white"
                 >
                   완료
                 </button>
@@ -510,7 +510,7 @@ const FirstResultPage: React.FC = () => {
 
         {pages.length >= 5 && (
           <button
-            className="w-1/3 py-4 mt-4 mb-4 p-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg"
+            className="w-1/3 py-4 mt-4 mb-4 p-4 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFE55A] hover:text-white hover:shadow-none rounded-2xl text-center shadow-lg gap-4"
             onClick={handleViewCompletedBook}
           >
             완성된 이야기를 확인해보세요!
