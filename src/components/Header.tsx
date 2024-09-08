@@ -18,14 +18,6 @@ const Header: React.FC = () => {
     }
   }, []); // 컴포넌트가 처음 렌더링될 때 실행
 
-  // useEffect(() => {
-  //   // 컴포넌트가 처음 렌더링될 때 실행되는 로직.
-  //   // localStorage에 로그인 정보가 남아있으면 redux의 로그인 상태를 true로 한다.
-  //   if (localStorage.getItem("id") !== null) {
-  //     dispatch(loginSuccess());
-  //   }
-  // }, []);
-
   const handleLogout = () => {
     // 컴포넌트가 처음 렌더링될 때 실행되는 로직.
     localStorage.removeItem("id");
@@ -61,7 +53,7 @@ const Header: React.FC = () => {
         )}
       </div>
       <div className="flex justify-between items-center p-2 mt-2">
-        <Link to="/" className="text-4xl ml-4 font-bold text-[#FFD600]">
+        <Link to="/" className="text-4xl ml-8 font-bold text-[#FFD600]">
           I-Book
         </Link>
         <input
@@ -69,10 +61,22 @@ const Header: React.FC = () => {
           placeholder="책 제목 혹은 작가의 닉네임을 입력하세요."
           className="w-1/2 py-3 rounded-full p-8 bg-gray-100"
         />
-        {/* 내 책장 버튼 */}
-        <div className="px-12 py-2 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFFAE1]   rounded-full text-center">
-          <Link to="/mybooks">내 책장 </Link>
-        </div>
+        {/* 로그인/로그아웃 버튼 */}
+        {isLoggedIn ? (
+          <button
+            onClick={handleLogout}
+            className="px-12 py-2 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFFAE1] rounded-full text-center"
+          >
+            로그아웃
+          </button>
+        ) : (
+          <Link
+            to="/Login"
+            className="px-12 py-2 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFFAE1] rounded-full text-center"
+          >
+            로그인
+          </Link>
+        )}
         {/* 내 프로필 버튼 */}
         <Link
           to="/profile"
@@ -82,7 +86,7 @@ const Header: React.FC = () => {
         </Link>
         <Link
           to="/allbooks"
-          className="px-12 py-2 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFFAE1]  rounded-full text-center  mr-12"
+          className="px-12 py-2 font-bold text-black bg-[#FFF0A3] hover:bg-[#FFFAE1]  rounded-full text-center mr-12"
         >
           모든 책장
         </Link>{" "}

@@ -16,6 +16,13 @@ module.exports = {
     extend: {
       animation: {
         spin: "spin 1s linear infinite",
+        infiniteSlide: "infiniteSlide 15s linear infinite",
+      },
+      keyframes: {
+        infiniteSlide: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
     },
   },
